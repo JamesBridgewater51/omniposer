@@ -1,0 +1,48 @@
+# ==============================================================================
+# Training Configuration for Flow Matching Experiment
+# ==============================================================================
+
+run_name: flow_matching_experiment
+seed: 0
+num_steps: 480000
+grad_accumulate_steps: 1
+grad_clip_val: 1.0
+
+# Mixed precision training
+use_fp16: false
+fp16_scale_growth: 2.0
+
+# Disabled-by-default profiling and backend performance controls
+profile_timing: false
+profile_cuda_sync: false
+profile_interval: 20
+torch_compile: false
+torch_compile_mode: reduce-overhead
+torch_compile_dynamic: false
+skip_initial_eval: false
+matmul_precision: null
+allow_tf32: false
+
+# EMA
+ema: true
+ema_decay: 0.998
+
+# Logging and checkpointing
+log_interval: 100
+eval_interval: 1000
+save_interval: 20000
+save_dir: runs
+timestep_respacing_eval: ""
+
+# Model type
+model_type: flow_matching
+generative_model_type: flow_matching
+
+# Enable SMPL loss computation (requires body model)
+enable_smpl_loss: true
+
+# Train TrajNet and PoseNet in a cascade fashion
+cascade: false
+
+body_model_path: data/body_models/smplx_model
+

@@ -1,0 +1,47 @@
+# ==============================================================================
+# TrajNet Configuration - AKOrN Architecture (Discriminative)
+# ==============================================================================
+
+class_name: model.trajnet.TrajNet
+
+# Core options
+cano_jts_pos: false
+use_masked_conditioner: true
+abstract_model_type: discriminative
+
+# Network configuration (architecture)
+network_config:
+  class_name: model.architectures.akorn_wrapper.AKOrNArchitecture
+  # Note: input_dim, output_dim are inferred from dataset in TrajNet._init_from_config
+  seq_len: 33  # Should match clip_len from dataset
+  ch: 256
+  n: 4
+  L: 10
+  T_internal: 8
+  J: attn
+  ksize: 3
+  heads: 8
+  ro_N: 2
+  gamma: 1.0
+  use_omega: true
+  c_norm: gn
+  use_freq_transform: false
+  freq_config: null
+
+# Frequency transform (disabled)
+use_freq_transform: false
+freq_config:
+  method: band_gating
+  num_bands: 4
+
+# Loss weights
+weight_loss_root_rec_repr: 1.0
+weight_loss_root_pos_global: 100.0
+weight_loss_root_vel_global: 1000.0
+weight_loss_root_rot_vel_from_abs_traj: 1.0
+weight_loss_root_smplx_transl_vel: 1000.0
+weight_loss_root_smplx_rot_vel: 1.0
+weight_loss_root_smooth: 1.0
+weight_loss_root_rot_cos_smooth_from_abs_traj: 1.0
+
+

@@ -1,0 +1,17 @@
+# ==============================================================================
+# Masking Configuration (Declarative Actions + Mixture)
+# ==============================================================================
+
+same_batch_for_schedules: true
+schedule_per_step: all
+
+actions:
+  # Inertial posers: 5 IMU (head + hands + feet)
+  - name: imu_5_leaf_xyz_rot
+    type: registry
+    scheme: mocap_head_hands_feet_xyz_rot
+mixture:
+  - until_step: null
+    weights:
+      imu_5_leaf_xyz_rot: 1.0
+    

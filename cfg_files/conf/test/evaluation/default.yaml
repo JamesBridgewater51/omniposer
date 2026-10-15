@@ -1,0 +1,11 @@
+# @package _global_
+# ==============================================================================
+# Evaluation Configuration (Default)
+# ==============================================================================
+# Settings for evaluating model performance.
+
+with_gt: true
+compute_metrics_per_seq: false
+sample_iter: 1
+eval_on_trajnet_only: false
+eval_on_posenet_only: false

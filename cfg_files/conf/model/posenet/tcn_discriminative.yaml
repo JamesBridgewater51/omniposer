@@ -1,0 +1,40 @@
+# ==============================================================================
+# PoseNet Configuration - TCN (UNet TCN) Architecture (Discriminative)
+# ==============================================================================
+# Uses UNetTCN - temporal convolutional network with UNet structure
+
+class_name: model.posenet.PoseNet
+
+# Core options
+body_model_path: ${training.body_model_path}
+cano_jts_pos: false
+use_masked_conditioner: true
+abstract_model_type: discriminative
+finetune_posenet: false
+latent_dim: 256
+
+# Network configuration (architecture)
+network_config:
+  class_name: model.architectures.unet_tcn.UNetTCN
+  # input_dim for discriminative: cond_dim (traj_feat_dim + cond_feat_dim) = 9 + 66 = 75
+  input_dim: 75
+  # cond_dim: same as input_dim for discriminative
+  cond_dim: 75
+  # output_dim: model_feat_dim = 140
+  output_dim: 140
+  mid_dim: 512
+  time_dim: 32
+  input_t: false
+  generative_model_type: flow_matching
+
+# Loss weights
+weight_loss_rec_repr_full_body: 1.0
+weight_loss_repr_foot_contact_mse: 0.5
+weight_loss_joint_pos_global: 100.0
+weight_loss_joint_vel_global: 1000.0
+weight_loss_joint_smooth: 1.0
+weight_loss_foot_skating: 1.0
+weight_loss_visible_joint_pos_global: 10.0
+start_skating_loss_epoch: 0
+
+

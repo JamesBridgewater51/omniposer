@@ -1,0 +1,18 @@
+# ==============================================================================
+# Masking Configuration (Declarative Actions + Mixture)
+# ==============================================================================
+
+same_batch_for_schedules: true
+schedule_per_step: all
+
+actions:
+  # Inertial posers: head + two hands + root
+  - name: imu_head_hands_root_xyz_rot
+    type: registry
+    scheme: optitrack_rigid_body
+
+
+mixture:
+  - until_step: null
+    weights:
+      imu_head_hands_root_xyz_rot: 1.0

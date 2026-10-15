@@ -1,0 +1,18 @@
+# ==============================================================================
+# Masking Configuration (Declarative Actions + Mixture)
+# ==============================================================================
+
+same_batch_for_schedules: true
+schedule_per_step: all
+
+actions:
+  # Inertial posers: head + two hands + root
+  - name: imu_xsens_full_xyz_rot
+    type: registry
+    scheme: xsens_full
+
+mixture:
+  - until_step: null
+    weights:
+      imu_xsens_full_xyz_rot: 1.0
+

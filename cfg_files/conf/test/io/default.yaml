@@ -1,0 +1,14 @@
+# @package _global_
+# ==============================================================================
+# IO Configuration (Default)
+# ==============================================================================
+# Input/output paths and settings for testing.
+
+# Output directory for test results
+save_root: test_results/results_default
+
+# Model checkpoint paths (typically set via CLI or derived from logdir)
+# Example: model_path_trajnet=runs/both_example_run/trajnet_best_model_stage_1.safetensors
+#          model_path_posenet=runs/both_example_run/posenet_best_model_stage_1.safetensors
+model_path_trajnet: ???
+model_path_posenet: ???

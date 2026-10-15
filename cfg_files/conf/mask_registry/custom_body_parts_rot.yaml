@@ -1,0 +1,36 @@
+# ==============================================================================
+# Mask Scheme Registry: Custom Body Part Configurations (XYZ + Rotations)
+# ==============================================================================
+# Customized body part tracking configurations with XYZ positions and rotations.
+
+defaults:
+  - /representation_registry@_global_.representation_registry: xyz_rot
+
+representation_config: xyz_rot
+
+schemes:
+  # Upper body with root (XYZ + rotations)
+  - name: upper_body_with_root_xyz_rot
+    visible_ids: [0, 3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+    topology: smplx_22
+    description: "Upper body with pelvis root. XYZ positions and rotations."
+    modalities:
+      local_positions:
+        visible_ids: [0, 3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+      R_world_joints:
+        visible_ids: [0, 3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+      R_root_joints:
+        visible_ids: [0, 3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+
+  # Lower body with root (XYZ + rotations)
+  - name: lower_body_with_root_xyz_rot
+    visible_ids: [0, 1, 2, 4, 5, 7, 8, 10, 11]
+    topology: smplx_22
+    description: "Lower body with pelvis root. XYZ positions and rotations."
+    modalities:
+      local_positions:
+        visible_ids: [0, 1, 2, 4, 5, 7, 8, 10, 11]
+      R_world_joints:
+        visible_ids: [0, 1, 2, 4, 5, 7, 8, 10, 11]
+      R_root_joints:
+        visible_ids: [0, 1, 2, 4, 5, 7, 8, 10, 11]

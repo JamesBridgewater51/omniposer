@@ -1,0 +1,62 @@
+# ==============================================================================
+# Training Model Wrappers - Flow Matching (Generative)
+# ==============================================================================
+
+traj_training_model:
+  class_name: model.generative.fm.fm_model.FlowMatchingModel
+  task: traj
+  num_total_steps: 16
+  ode_solver: discrete_euler
+  ode_step_size: null
+  ode_time_grid_steps: null
+  pred_target: velocity
+  discrete_timestep_sampling: true
+  time_sampler: uniform
+  eps_t: 1e-6
+  scheduler_type: condot
+  scheduler_kwargs: {}
+  sampling_noise_scale: 1.0
+  geometry_start_step: 50000
+  geometry_warmup_steps: 100000
+  geometry_max_weight: 1.0
+  geometry_time_weight_power: 2.0
+  geometry_time_weight_min_t: 0.25
+  geometry_time_weight_floor: 0.0
+  geometry_pred_x1_grad_scale: 1.0
+  geometry_level1_start_step: 50000
+  geometry_level1_warmup_steps: 80000
+  geometry_level2_start_step: 100000
+  geometry_level2_warmup_steps: 100000
+  geometry_level3_start_step: 180000
+  geometry_level3_warmup_steps: 120000
+  log_gradient_norms: false
+
+pose_training_model:
+  class_name: model.generative.fm.fm_model.FlowMatchingModel
+  task: pose
+  num_total_steps: 16
+  ode_solver: discrete_euler
+  ode_step_size: null
+  ode_time_grid_steps: null
+  pred_target: velocity
+  discrete_timestep_sampling: true
+  time_sampler: uniform
+  eps_t: 1e-6
+  scheduler_type: condot
+  scheduler_kwargs: {}
+  sampling_noise_scale: 1.0
+  geometry_start_step: 50000
+  geometry_warmup_steps: 100000
+  geometry_max_weight: 1.0
+  geometry_time_weight_power: 2.0
+  geometry_time_weight_min_t: 0.25
+  geometry_time_weight_floor: 0.0
+  geometry_pred_x1_grad_scale: 1.0
+  geometry_level1_start_step: 50000
+  geometry_level1_warmup_steps: 80000
+  geometry_level2_start_step: 100000
+  geometry_level2_warmup_steps: 100000
+  geometry_level3_start_step: 180000
+  geometry_level3_warmup_steps: 120000
+  log_gradient_norms: false
+

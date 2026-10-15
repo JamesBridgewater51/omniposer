@@ -1,0 +1,11 @@
+# @package _global_
+# ==============================================================================
+# Visualization Configuration (Default)
+# ==============================================================================
+# Settings for visualizing results during testing.
+
+visualize: false
+vis_interval: 100
+visualize_sampling_progress: false
+sampling_progress_stride: 1
+sampling_progress_max_steps: 8

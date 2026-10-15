@@ -1,0 +1,39 @@
+# ==============================================================================
+# TrajNet Configuration - Mamba SSM Architecture (Discriminative)
+# ==============================================================================
+
+class_name: model.trajnet.TrajNet
+
+# Core options
+cano_jts_pos: false
+use_masked_conditioner: true
+abstract_model_type: discriminative
+
+# Network configuration (architecture)
+network_config:
+  class_name: model.architectures.mamba.Mamba
+  # Note: input_dim, output_dim are inferred from dataset in TrajNet._init_from_config
+  d_model: 1024
+  n_layer: 16
+  ssm_layer: Mamba2
+  rms_norm: true
+  residual_in_fp32: true
+  fused_add_norm: true
+
+# Frequency transform (disabled)
+use_freq_transform: false
+freq_config:
+  method: band_gating
+  num_bands: 4
+
+# Loss weights
+weight_loss_root_rec_repr: 1.0
+weight_loss_root_pos_global: 100.0
+weight_loss_root_vel_global: 1000.0
+weight_loss_root_rot_vel_from_abs_traj: 1.0
+weight_loss_root_smplx_transl_vel: 1000.0
+weight_loss_root_smplx_rot_vel: 1.0
+weight_loss_root_smooth: 1.0
+weight_loss_root_rot_cos_smooth_from_abs_traj: 1.0
+
+

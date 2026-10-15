@@ -1,0 +1,10 @@
+# ==============================================================================
+# DDP (Distributed Data Parallel) Configuration - Enabled
+# ==============================================================================
+# Note: rank, local_rank, world_size are set at runtime by dist_util.setup_dist()
+
+enabled: true
+world_size: 1  # Set at runtime
+rank: 0        # Set at runtime
+local_rank: 0  # Set at runtime
+

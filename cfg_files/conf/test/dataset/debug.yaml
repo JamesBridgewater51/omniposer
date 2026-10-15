@@ -1,0 +1,30 @@
+# @package _global_
+# ==============================================================================
+# Debug Test Dataset Configuration
+# ==============================================================================
+# A minimal dataset for quick testing and codebase integrity checks.
+# Uses only a small subset of AMASS for fast iteration.
+
+test_datasets:
+  - dataset:
+      class_name: data_sets.dataset_amass.DatasetAMASS
+      preprocessed_dataset_root: datasets/AMASS_smplx_preprocessed
+      split: test
+      datasets: ['SFU']  # Only SFU for quick testing
+      cano_jts_pos: false
+      align_to_yaxis: true
+      input_noise: false
+      clip_len: 33
+      spacing: 2
+      mean_std: false
+      norm_strategy: meanstd
+      slice_strategy: ${slice_strategy}
+      body_model_path: data/body_models/smplx_model
+      joints_num: 22
+      disable_cache: true
+      logging_enabled: true
+      use_ddp: false
+
+# Dataset name for routing logic
+dataset_name: amass
+

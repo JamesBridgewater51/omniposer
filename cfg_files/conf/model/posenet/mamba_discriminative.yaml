@@ -1,0 +1,40 @@
+# ==============================================================================
+# PoseNet Configuration - Mamba SSM Architecture (Discriminative)
+# ==============================================================================
+# Uses Mamba - State Space Model for sequence modeling
+
+class_name: model.posenet.PoseNet
+
+# Core options
+body_model_path: ${training.body_model_path}
+cano_jts_pos: false
+use_masked_conditioner: true
+abstract_model_type: discriminative
+finetune_posenet: false
+latent_dim: 256
+
+# Network configuration (architecture)
+network_config:
+  class_name: model.architectures.mamba.Mamba
+  # input_dim for discriminative: cond_dim (traj_feat_dim + cond_feat_dim) = 9 + 66 = 75
+  input_dim: 75
+  # output_dim: model_feat_dim = 140
+  output_dim: 140
+  d_model: 1024
+  n_layer: 16
+  ssm_layer: Mamba2
+  rms_norm: true
+  residual_in_fp32: true
+  fused_add_norm: true
+
+# Loss weights
+weight_loss_rec_repr_full_body: 1.0
+weight_loss_repr_foot_contact_mse: 0.5
+weight_loss_joint_pos_global: 100.0
+weight_loss_joint_vel_global: 1000.0
+weight_loss_joint_smooth: 1.0
+weight_loss_foot_skating: 1.0
+weight_loss_visible_joint_pos_global: 10.0
+start_skating_loss_epoch: 0
+
+

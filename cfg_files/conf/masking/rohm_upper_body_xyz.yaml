@@ -1,0 +1,17 @@
+# ==============================================================================
+# Masking Configuration (Declarative Actions + Mixture)
+# ==============================================================================
+
+same_batch_for_schedules: true
+schedule_per_step: all
+
+actions:
+  # RoHM: upper body + root (XYZ only)
+  - name: rohm_upper_body_xyz
+    type: registry
+    scheme: upper_body_with_root_xyz
+
+mixture:
+  - until_step: null
+    weights:
+      rohm_upper_body_xyz: 1.0

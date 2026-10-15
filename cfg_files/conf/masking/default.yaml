@@ -1,0 +1,62 @@
+# ==============================================================================
+# Masking Configuration (Declarative Actions + Mixture)
+# ==============================================================================
+
+# whole_batch preserves specialist behavior; per_sample assigns one action per sample.
+batch_policy: whole_batch
+same_batch_for_schedules: true
+schedule_per_step: all
+
+actions:
+  # RoHM: upper body + root (XYZ only)
+  - name: rohm_upper_body_xyz
+    type: registry
+    scheme: upper_body_with_root_xyz
+
+  # EgoEgo: head-only (XYZ + rotations)
+  - name: egoego_head_xyz_rot
+    type: registry
+    scheme: egocentric_head_xyz_rot
+
+  # Inertial posers: 6 IMU (root + head + hands + feet)
+  - name: imu_6_root_leaf_xyz_rot
+    type: registry
+    scheme: mocap_head_hands_feet_pelvis_xyz_rot
+
+  # Inertial posers: 5 IMU (head + hands + feet)
+  - name: imu_5_leaf_xyz_rot
+    type: registry
+    scheme: mocap_head_hands_feet_xyz_rot
+
+  # Inertial posers: head + two hands + root
+  - name: imu_head_hands_root_xyz_rot
+    type: registry
+    scheme: optitrack_rigid_body
+
+  # Inertial posers: dense IMU coverage
+  - name: imu_xsens_full_xyz_rot
+    type: registry
+    scheme: xsens_full
+
+  # EgoExo-like prior (data-driven masking)
+  - name: egoexo_prior
+    type: custom
+    scheme: egoexo_xyz
+    fn: egoexo_like
+
+  # Random masking: mask up to 15 joints
+  - name: random_joints_max15
+    type: random_joint_visibility
+    max_mask: 15
+
+mixture:
+  - until_step: null
+    weights:
+      rohm_upper_body_xyz: 1.0
+      egoego_head_xyz_rot: 1.0
+      imu_6_root_leaf_xyz_rot: 1.0
+      imu_5_leaf_xyz_rot: 1.0
+      imu_head_hands_root_xyz_rot: 1.0
+      imu_xsens_full_xyz_rot: 1.0
+      egoexo_prior: 1.0
+      random_joints_max15: 1.0

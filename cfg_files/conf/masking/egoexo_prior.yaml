@@ -1,0 +1,17 @@
+# ==============================================================================
+# Masking Configuration (Declarative Actions + Mixture)
+# ==============================================================================
+
+same_batch_for_schedules: true
+schedule_per_step: all
+
+actions:
+  # EgoExo-like prior (data-driven masking)
+  - name: egoexo_prior
+    type: custom
+    fn: egoexo_like
+    scheme: egoexo_xyz
+mixture:
+  - until_step: null
+    weights:
+      egoexo_prior: 1.0

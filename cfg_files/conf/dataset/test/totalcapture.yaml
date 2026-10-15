@@ -1,0 +1,37 @@
+# @package _global_
+# ==============================================================================
+# TotalCapture Test Dataset Configuration
+# ==============================================================================
+
+test_datasets:
+  - dataset:
+      class_name: data_sets.dataset_mocap.DatasetTotalCapture
+      opt:
+        root: datasets/RobustCap/dataset_work/TotalCapture
+        split: test
+      cano_jts_pos: false
+      input_noise: false
+      noise_std_joint: 0.0
+      noise_std_smplx_global_rot: 0.0
+      noise_std_smplx_body_rot: 0.0
+      noise_std_smplx_trans: 0.0
+      noise_std_smplx_betas: 0.0
+      align_to_yaxis: true
+      clip_len: 33
+      mean_std: false
+      norm_strategy: meanstd
+      norm_params_path: ${training.save_dir}/${task}_${training.run_name}/DatasetTotalCapture_test_norm_params.pkl
+      slice_strategy: full_sequence
+      # Motion-aware sampling parameters
+      motion_weight_strategy: combined
+      motion_weight_temperature: 1.0
+      motion_weight_min: 0.1
+      motion_fps: 30.0
+      body_model_path: ${training.body_model_path}
+      joints_num: 22
+      head_joint_idx: [15]
+      torso_joint_idx: [12, 9, 6, 3]
+      clip_percentiles: [1.0, 99.0]
+      disable_cache: true
+      logging_enabled: true
+      use_ddp: ${ddp.enabled}

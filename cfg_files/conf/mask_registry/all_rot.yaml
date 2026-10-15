@@ -1,0 +1,155 @@
+# ==============================================================================
+# Mask Scheme Registry: all mask scheme registries with rotations yaml config file.
+# ==============================================================================
+
+defaults:
+  - /representation_registry@_global_.representation_registry: xyz_rot
+
+representation_config: xyz_rot
+
+schemes:
+  # Xsens MVN full-body IMU tracking
+  - name: xsens_full
+    visible_ids: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+    topology: smplx_22
+    description: "Xsens MVN full-body IMU tracking. XYZ positions and rotations."
+    modalities:
+      local_positions:
+        visible_ids: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+      R_world_joints:
+        visible_ids: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+      R_root_joints:
+        visible_ids: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+
+  # Xsens upper body only
+  - name: xsens_upper_body
+    visible_ids: [0, 3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+    topology: smplx_22
+    description: "Xsens upper body tracking only."
+    modalities:
+      local_positions:
+        visible_ids: [0, 3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+      R_world_joints:
+        visible_ids: [0, 3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+      R_root_joints:
+        visible_ids: [0, 3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+
+  # OptiTrack rigid body tracking (similar to VR setup)
+  - name: optitrack_rigid_body
+    visible_ids: [0, 15, 20, 21, 10, 11]
+    topology: smplx_22
+    description: "OptiTrack rigid body tracking: 6 tracked objects with 6-DoF."
+    modalities:
+      local_positions:
+        visible_ids: [0, 15, 20, 21, 10, 11]
+      R_world_joints:
+        visible_ids: [0, 15, 20, 21, 10, 11]
+      R_root_joints:
+        visible_ids: [0, 15, 20, 21, 10, 11]
+
+  # Head-only tracking (XYZ + rotation)
+  - name: egocentric_head_xyz_rot
+    visible_ids: [15]
+    topology: smplx_22
+    description: "Egocentric head-only tracking. XYZ position and rotation."
+    modalities:
+      local_positions:
+        visible_ids: [15]
+      R_world_joints:
+        visible_ids: [15]
+      R_root_joints:
+        visible_ids: [15]
+
+  # EgoExo-like probabilistic masking (XYZ + rotation)
+  - name: egoexo_xyz
+    topology: smplx_22
+    allow_time_variation: true
+    description: "EgoExo-like masking with probabilistic joint visibility based on egocentric camera statistics."
+    modalities:
+      local_positions:
+        visible_ids: [1, 2, 4, 5, 7, 8, 15, 16, 17, 18, 19, 20, 21]
+      R_world_joints:
+        visible_ids: []
+      R_root_joints:
+        visible_ids: []
+
+  # 5-point tracking: head + hands + feet (XYZ + rotations)
+  - name: mocap_head_hands_feet_xyz_rot
+    visible_ids: [15, 20, 21, 10, 11]
+    topology: smplx_22
+    description: "5-point MoCap: head + two hands + two feet. XYZ positions and rotations."
+    modalities:
+      local_positions:
+        visible_ids: [15, 20, 21, 10, 11]
+      R_world_joints:
+        visible_ids: [15, 20, 21, 10, 11]
+      R_root_joints:
+        visible_ids: [15, 20, 21, 10, 11]
+
+  # 6-point tracking: pelvis + head + hands + feet (XYZ + rotations)
+  - name: mocap_head_hands_feet_pelvis_xyz_rot
+    visible_ids: [0, 15, 20, 21, 10, 11]
+    topology: smplx_22
+    description: "6-point MoCap: pelvis + head + two hands + two feet. XYZ positions and rotations."
+    modalities:
+      local_positions:
+        visible_ids: [0, 15, 20, 21, 10, 11]
+      R_world_joints:
+        visible_ids: [0, 15, 20, 21, 10, 11]
+      R_root_joints:
+        visible_ids: [0, 15, 20, 21, 10, 11]
+
+  # Upper body with root (XYZ + rotations)
+  - name: upper_body_with_root_xyz_rot
+    visible_ids: [0, 3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+    topology: smplx_22
+    description: "Upper body with pelvis root. XYZ positions and rotations."
+    modalities:
+      local_positions:
+        visible_ids: [0, 3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+      R_world_joints:
+        visible_ids: [0, 3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+      R_root_joints:
+        visible_ids: [0, 3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+
+  # Lower body with root (XYZ + rotations)
+  - name: lower_body_with_root_xyz_rot
+    visible_ids: [0, 1, 2, 4, 5, 7, 8, 10, 11]
+    topology: smplx_22
+    description: "Lower body with pelvis root. XYZ positions and rotations."
+    modalities:
+      local_positions:
+        visible_ids: [0, 1, 2, 4, 5, 7, 8, 10, 11]
+      R_world_joints:
+        visible_ids: [0, 1, 2, 4, 5, 7, 8, 10, 11]
+      R_root_joints:
+        visible_ids: [0, 1, 2, 4, 5, 7, 8, 10, 11]
+
+  # Upper body with root (XYZ + rotations)
+  - name: upper_body_with_root_xyz
+    visible_ids: [0, 3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+    topology: smplx_22
+    description: "Upper body with pelvis root. XYZ positions and rotations."
+    modalities:
+      local_positions:
+        visible_ids: [0, 3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+      R_world_joints:
+        visible_ids: []
+      R_root_joints:
+        visible_ids: []
+
+  # Lower body with root (XYZ + rotations)
+  - name: lower_body_with_root_xyz
+    visible_ids: [0, 1, 2, 4, 5, 7, 8, 10, 11]
+    topology: smplx_22
+    description: "Lower body with pelvis root. XYZ positions and rotations."
+    modalities:
+      local_positions:
+        visible_ids: [0, 1, 2, 4, 5, 7, 8, 10, 11]
+      R_world_joints:
+        visible_ids: []
+      R_root_joints:
+        visible_ids: []
+
+
+

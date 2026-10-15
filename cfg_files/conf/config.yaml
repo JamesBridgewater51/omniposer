@@ -1,0 +1,51 @@
+# ==============================================================================
+# Main Hydra Configuration
+# ==============================================================================
+# This is the main config file that composes all config groups.
+# Use `defaults` to select which config from each group to use.
+#
+# Usage:
+#   python main_train.py                                        # Use all defaults
+#   python main_train.py training=discriminative_toy            # Use specific training config
+#   python main_train.py training.num_steps=100000              # Override specific value
+# ==============================================================================
+
+defaults:
+  # Config groups - each populates a top-level key
+  - training: default
+  - optimizer@optimizers: adamw
+  - scheduler@lr_schedulers: warmup_cosine
+  - ddp: disabled
+  - logging: wandb
+  - dataloader@_global_: default
+  - masking: default
+  - representation: input_noise
+  - mask_registry: custom_body_parts_xyz
+  - model/trajnet@trajnet: tcn_discriminative
+  - model/posenet@posenet: dit_discriminative
+  - training_model@_global_: discriminative_toy
+  - pretrained: disabled
+  - consistency: default
+  - trajcontrol: disabled
+  
+  # Dataset configs - use @_global_ package to put train_datasets/test_datasets at root
+  - dataset/train: amass
+  - dataset/test: amass
+  
+  # _self_ comes after config groups so that inline values can override if needed
+  - _self_
+
+# ==============================================================================
+# Task Configuration
+# ==============================================================================
+task: both  # 'traj', 'pose', or 'both'
+
+# ==============================================================================
+# Hydra Configuration
+# ==============================================================================
+hydra:
+  run:
+    dir: runs/
+  output_subdir: null
+  job:
+    chdir: false

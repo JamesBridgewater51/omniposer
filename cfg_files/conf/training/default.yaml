@@ -1,0 +1,39 @@
+# ==============================================================================
+# Default Training Configuration
+# ==============================================================================
+
+run_name: default_run
+seed: 0
+num_steps: 480000
+grad_accumulate_steps: 1
+grad_clip_val: 1.0
+
+# Training loop mode
+loop_mode: default  # 'default' or 'mask_per_rank'
+
+# Mixed precision training
+use_fp16: false
+fp16_scale_growth: 2.0
+
+# EMA
+ema: false
+ema_decay: 0.998
+
+# Logging and checkpointing
+log_interval: 100
+eval_interval: 1000
+save_interval: 20000
+save_dir: runs
+timestep_respacing_eval: ""
+
+# Model type
+model_type: discriminative  # 'diffusion', 'flow_matching', 'meanflow', 'shortcut', 'consistency', 'improved_consistency', 'discriminative'
+generative_model_type: diffusion  # Used when model_type is generative
+
+# Enable SMPL loss computation (requires body model)
+enable_smpl_loss: true
+
+# Train TrajNet and PoseNet in a cascade fashion
+cascade: false
+
+body_model_path: data/body_models/smplx_model

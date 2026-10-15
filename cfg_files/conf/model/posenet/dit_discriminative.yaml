@@ -1,0 +1,47 @@
+# ==============================================================================
+# PoseNet Configuration - DiT Architecture (Discriminative)
+# ==============================================================================
+# Uses SpecificPoseDiT - task-specific architecture with pose-aware conditioning
+
+class_name: model.posenet.PoseNet
+
+# Core options
+body_model_path: ${training.body_model_path}
+cano_jts_pos: false
+use_masked_conditioner: true
+abstract_model_type: discriminative
+finetune_posenet: false
+latent_dim: 256
+
+# Network configuration (architecture)
+network_config:
+  class_name: model.architectures.pose_dit.SpecificPoseDiT
+  # PoseNet models smplx_body_pose_6d, smplx_betas, foot_contact: 21 * 6 + 10 + 4 = 140
+  model_feat_dim: 140
+  traj_feat_dim: 9
+  cond_feat_dim: 66
+  latent_dim: 256
+  ff_size: 1024
+  num_layers: 8
+  num_heads: 4
+  dropout: 0.1
+  activation: gelu
+  use_rope: true
+  use_film: false
+  abstract_model_type: discriminative
+  generative_model_type: diffusion
+  num_joints: 22
+  finetune_posenet: false
+  use_freq_transform: false
+  freq_config: null
+
+# Loss weights
+weight_loss_rec_repr_full_body: 1.0
+weight_loss_repr_foot_contact_mse: 0.5
+weight_loss_joint_pos_global: 100.0
+weight_loss_joint_vel_global: 1000.0
+weight_loss_joint_smooth: 1.0
+weight_loss_foot_skating: 1.0
+weight_loss_visible_joint_pos_global: 10.0
+start_skating_loss_epoch: 0
+

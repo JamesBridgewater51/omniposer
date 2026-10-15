@@ -1,0 +1,19 @@
+# ==============================================================================
+# Masking Configuration (Declarative Actions + Mixture)
+# ==============================================================================
+
+same_batch_for_schedules: true
+schedule_per_step: all
+
+actions:
+  # Inertial posers: head + two hands + root
+  - name: random_joints_max15
+    type: random_joint_visibility
+    max_mask: 15
+
+
+mixture:
+  - until_step: null
+    weights:
+      random_joints_max15: 1.0
+

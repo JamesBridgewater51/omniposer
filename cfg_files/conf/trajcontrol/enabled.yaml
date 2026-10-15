@@ -1,0 +1,8 @@
+# ==============================================================================
+# TrajControl Configuration - Enabled (Fine-tuning)
+# ==============================================================================
+
+enabled: true
+load_pretrained_backbone: true
+pretrained_backbone_path: ""  # Set path to pretrained backbone
+

@@ -1,0 +1,46 @@
+# ==============================================================================
+# Mask Scheme Registry: Optical Tracker Systems (XYZ positions only)
+# ==============================================================================
+# Optical motion capture system configurations with XYZ positions only.
+
+defaults:
+  - /representation_registry@_global_.representation_registry: xyz_only
+
+representation_config: xyz_only
+
+schemes:
+  # Nokov full-body marker set
+  - name: nokov_full
+    visible_ids: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+    topology: smplx_22
+    description: "Nokov optical MoCap full-body marker set. Feet (10,11) may be occluded."
+    modalities:
+      local_positions:
+        visible_ids: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+
+  # Nokov sparse marker set
+  - name: nokov_sparse
+    visible_ids: [0, 15, 16, 17, 20, 21, 7, 8]
+    topology: smplx_22
+    description: "Nokov sparse marker set: pelvis, head, shoulders, wrists, ankles."
+    modalities:
+      local_positions:
+        visible_ids: [0, 15, 16, 17, 20, 21, 7, 8]
+
+  # OptiTrack full-body
+  - name: optitrack_full_body
+    visible_ids: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+    topology: smplx_22
+    description: "OptiTrack full-body marker set. All 22 SMPLX joints visible."
+    modalities:
+      local_positions:
+        visible_ids: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+
+  # OptiTrack baseline (10 key landmarks)
+  - name: optitrack_baseline
+    visible_ids: [0, 15, 16, 17, 1, 2, 20, 21, 7, 8]
+    topology: smplx_22
+    description: "OptiTrack baseline marker set: pelvis, head, shoulders, hips, wrists, ankles."
+    modalities:
+      local_positions:
+        visible_ids: [0, 15, 16, 17, 1, 2, 20, 21, 7, 8]

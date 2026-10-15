@@ -1,0 +1,183 @@
+# ==============================================================================
+# Test Configuration
+# ==============================================================================
+# This config specifies test-time settings. Model and training parameters are
+# loaded from the training run's logdir (config.yaml).
+#
+# Usage:
+#   python test.py logdir=runs/both_example_run
+#   python test.py logdir=runs/both_example_run model_path=path/to/ckpt.safetensors
+#   python test.py logdir=runs/both_example_run dataset=debug
+# ==============================================================================
+
+defaults:
+  # Test-specific config groups
+  - evaluation: default
+  - inference: default
+  - visualization: default
+  - io: default
+  
+  # Dataset configs in this directory
+  - dataset: amass
+  
+  # _self_ comes after config groups so that inline values can override
+  - _self_
+
+# ==============================================================================
+# Training Run Reference (REQUIRED)
+# ==============================================================================
+# Path to training run's logdir containing config.yaml and checkpoints
+logdir: ???
+
+# ==============================================================================
+# Test DataLoader Configuration
+# ==============================================================================
+test_dataloader:
+  batch_size: 1
+  shuffle: false
+  num_workers: 0
+  drop_last: false
+  pin_memory: true
+
+# ==============================================================================
+# Seed
+# ==============================================================================
+seed: 0
+
+# ==============================================================================
+# Test Masking Policy
+# ==============================================================================
+# whole_batch preserves test_mask_action compatibility.
+# sweep evaluates test_mask_actions one action at a time.
+# per_sample assigns test_mask_actions within each batch for compatible baselines.
+test_batch_policy: whole_batch
+test_mask_action: null
+test_mask_actions: null
+
+# ==============================================================================
+# Baseline Selection (for hook-based pipeline)
+# ==============================================================================
+baseline: ours
+metrics_baseline: null
+
+# ==============================================================================
+# Checkpoint Weight Selection
+# ==============================================================================
+# null follows training.ema from logdir/config.yaml. This matches in-training
+# best-checkpoint evaluation for EMA-trained runs while preserving raw-weight
+# loading for non-EMA runs.
+use_ema_checkpoint: null
+strict_ema_checkpoint: false
+
+# Aggregation used when sample_iter > 1. Flow matching sampling starts from
+# random noise, so averaging multiple generated representations is a legitimate
+# inference-time ensemble when explicitly enabled. The default preserves the
+# historical behavior for existing sample_iter>1 commands: run multiple samples
+# and keep the last one. For mean/median aggregation, enable
+# postprocess_rot6d_normalize when strict 6D rotation manifold cleanup is desired
+# after unnormalization.
+sample_aggregation: last
+
+# Normalization params used for evaluation. prefer_global uses
+# <logdir>/global_norm_params.pkl when it exists; this protects old run
+# directories from stale Dataset*_train_norm_params.pkl files being rewritten by
+# later eval/debug jobs. Use provided only for explicit legacy reproduction.
+eval_norm_params_policy: prefer_global  # provided / prefer_global / strict_global
+
+# ==============================================================================
+# Prediction Postprocessing
+# ==============================================================================
+# Disabled by default. These legal inference-time priors operate on the predicted
+# SMPL representation before FK/metrics/visualization. They use only model
+# predictions, static config, and optionally the visible input observations.
+postprocess_rot6d_normalize: false
+postprocess_betas_sequence_average: false
+
+postprocess_temporal_smoothing: false
+postprocess_temporal_smoothing_kernel: 5
+postprocess_temporal_smoothing_strength: 0.5
+postprocess_temporal_smoothing_modalities:
+  - smplx_trans
+  - smplx_rot_6d
+  - smplx_body_pose_6d
+
+postprocess_contact_median: false
+postprocess_contact_median_kernel: 3
+postprocess_contact_threshold: 0.5
+postprocess_contact_binarize: false
+
+postprocess_contact_kinematic: false
+postprocess_contact_kinematic_mode: replace  # replace / or / and / blend
+postprocess_contact_kinematic_floor_mode: predicted_min  # predicted_min / absolute / target_z
+postprocess_contact_kinematic_vel_thresh: 0.00005
+postprocess_contact_kinematic_height_thresholds:
+  - 0.18
+  - 0.15
+  - 0.18
+  - 0.15
+postprocess_contact_kinematic_joint_ids:
+  - 7
+  - 10
+  - 8
+  - 11
+postprocess_contact_kinematic_last_frame: repeat  # repeat / zero
+postprocess_contact_kinematic_blend_weight: 1.0
+
+postprocess_foot_lock: false
+postprocess_foot_lock_strength: 1.0
+postprocess_foot_lock_contact_threshold: 0.5
+postprocess_foot_lock_max_shift_per_frame: 0.03
+postprocess_foot_lock_max_total_shift: 0.20
+postprocess_foot_lock_no_contact_decay: 1.0
+postprocess_foot_lock_joint_ids:
+  - 7
+  - 10
+  - 8
+  - 11
+
+postprocess_observed_joint_anchor: false
+postprocess_observed_joint_anchor_strength: 1.0
+postprocess_observed_joint_anchor_min_joints: 1
+postprocess_observed_joint_anchor_max_shift: 0.25
+postprocess_observed_joint_anchor_smooth_delta: false
+postprocess_observed_joint_anchor_smooth_kernel: 3
+postprocess_observed_joint_anchor_smooth_strength: 0.5
+postprocess_observed_joint_anchor_dims:
+  - 0
+  - 1
+  - 2
+postprocess_observed_joint_anchor_joint_ids: null
+
+postprocess_floor_lift: false
+postprocess_floor_lift_mode: sequence  # sequence / frame
+postprocess_floor_lift_target_z: 0.0
+postprocess_floor_lift_tolerance: 0.01
+postprocess_floor_lift_max_shift: 0.10
+postprocess_floor_lift_smooth_kernel: 1
+postprocess_floor_lift_smooth_strength: 0.0
+postprocess_floor_lift_joint_ids:
+  - 10
+  - 11
+postprocess_fk_chunk_size: 512
+
+# Visible-safe yaw initialization can use observed joint rotations when visible
+# positions are underconstrained, e.g. head-only HMD input.
+root_init_rot_visible_rotation_modality: R_world_joints
+root_init_rot_visible_rotation_axis: y  # x / y / z / -x / -y / -z
+root_init_rot_visible_rotation_joint_ids: null
+
+# ==============================================================================
+# MPI/Distributed Settings (set at runtime)
+# ==============================================================================
+dist_rank: 0
+dist_world_size: 1
+
+# ==============================================================================
+# Hydra Configuration
+# ==============================================================================
+hydra:
+  run:
+    dir: .
+  output_subdir: null
+  job:
+    chdir: false

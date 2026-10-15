@@ -1,0 +1,46 @@
+# ==============================================================================
+# Mask Scheme Registry: 3D Image Detector Settings (XYZ positions only)
+# ==============================================================================
+# 3D keypoint detection configurations with XYZ positions only.
+
+defaults:
+  - /representation_registry@_global_.representation_registry: xyz_only
+
+representation_config: xyz_only
+
+schemes:
+  # COCO 17-keypoint mapped to SMPLX (XYZ only)
+  - name: coco_keypoints_xyz
+    visible_ids: [0, 1, 2, 4, 5, 7, 8, 12, 15, 16, 17, 18, 19, 20, 21]
+    topology: smplx_22
+    description: "COCO 17-keypoint detection mapped to SMPLX. XYZ positions only."
+    modalities:
+      local_positions:
+        visible_ids: [0, 1, 2, 4, 5, 7, 8, 12, 15, 16, 17, 18, 19, 20, 21]
+
+  # COCO strict mapping (no derived pelvis/neck)
+  - name: coco_keypoints_xyz_strict
+    visible_ids: [1, 2, 4, 5, 7, 8, 15, 16, 17, 18, 19, 20, 21]
+    topology: smplx_22
+    description: "COCO keypoints strict mapping (no derived pelvis/neck). XYZ only."
+    modalities:
+      local_positions:
+        visible_ids: [1, 2, 4, 5, 7, 8, 15, 16, 17, 18, 19, 20, 21]
+
+  # COCO upper body only
+  - name: coco_upper_body_xyz
+    visible_ids: [15, 16, 17, 18, 19, 20, 21]
+    topology: smplx_22
+    description: "COCO upper body keypoints only. XYZ positions."
+    modalities:
+      local_positions:
+        visible_ids: [15, 16, 17, 18, 19, 20, 21]
+
+  # COCO lower body only
+  - name: coco_lower_body_xyz
+    visible_ids: [1, 2, 4, 5, 7, 8]
+    topology: smplx_22
+    description: "COCO lower body keypoints only. XYZ positions."
+    modalities:
+      local_positions:
+        visible_ids: [1, 2, 4, 5, 7, 8]

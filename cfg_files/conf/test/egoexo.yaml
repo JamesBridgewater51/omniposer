@@ -1,0 +1,67 @@
+# ==============================================================================
+# Test Configuration
+# ==============================================================================
+# This config specifies test-time settings. Model and training parameters are
+# loaded from the training run's logdir (config.yaml).
+#
+# Usage:
+#   python test.py logdir=runs/both_example_run
+#   python test.py logdir=runs/both_example_run model_path=path/to/ckpt.safetensors
+#   python test.py logdir=runs/both_example_run dataset=debug
+# ==============================================================================
+
+defaults:
+  # Test-specific config groups
+  - evaluation: wo_gt
+  - inference: egoexo
+  - visualization: default
+  - io: default
+  
+  # Dataset configs in this directory
+  - dataset: egoexo
+  
+  # _self_ comes after config groups so that inline values can override
+  - _self_
+
+# ==============================================================================
+# Training Run Reference (REQUIRED)
+# ==============================================================================
+# Path to training run's logdir containing config.yaml and checkpoints
+logdir: ???
+egoexo_root_path: ${test_datasets.0.dataset.opt.root}
+
+# ==============================================================================
+# Test DataLoader Configuration
+# ==============================================================================
+test_dataloader:
+  batch_size: 1
+  shuffle: false
+  num_workers: 0
+  drop_last: false
+  pin_memory: true
+
+# ==============================================================================
+# Seed
+# ==============================================================================
+seed: 0
+
+# ==============================================================================
+# Baseline Selection (for hook-based pipeline)
+# ==============================================================================
+baseline: ours
+
+# ==============================================================================
+# MPI/Distributed Settings (set at runtime)
+# ==============================================================================
+dist_rank: 0
+dist_world_size: 1
+
+# ==============================================================================
+# Hydra Configuration
+# ==============================================================================
+hydra:
+  run:
+    dir: .
+  output_subdir: null
+  job:
+    chdir: false

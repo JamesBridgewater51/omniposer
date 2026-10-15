@@ -1,0 +1,83 @@
+# ==============================================================================
+# PoseNet Configuration - DiT Architecture (Generative)
+# ==============================================================================
+
+class_name: model.posenet.PoseNet
+
+# Core options
+body_model_path: ${training.body_model_path}
+cano_jts_pos: false
+use_masked_conditioner: true
+abstract_model_type: generative
+finetune_posenet: false
+latent_dim: 256
+
+# Network configuration (architecture)
+network_config:
+  class_name: model.architectures.SpecificPoseDiT
+  # PoseNet models smplx_body_pose_6d, smplx_beats, foot_contact, 21 * 6 + 10 + 4
+  model_feat_dim: 140
+  traj_feat_dim: 9
+  cond_feat_dim: 66
+  latent_dim: 256
+  ff_size: 1024
+  num_layers: 8
+  num_heads: 4
+  dropout: 0.1
+  activation: gelu
+  use_rope: true
+  use_film: false
+  abstract_model_type: generative
+  generative_model_type: flow_matching
+  num_joints: 22
+  finetune_posenet: false
+  use_freq_transform: false
+  freq_config: null
+  moe:
+    grouped:
+      enabled: false
+      num_experts: 4
+      top_k: 2
+      num_shared_experts: 1
+      segment_size: 1
+      routing_granularity: group
+      router_hidden_dim: 128
+      expert_hidden_dim: 512
+      grouping_name: body_part_6
+      residual_scale: 1.0
+      continuity_bias_weight: 0.0
+      global_load_bias_weight: 0.0
+      router_noise_std: 0.0
+      load_balance_loss_weight: 0.01
+      router_z_loss_weight: 0.0001
+      temporal_consistency_loss_weight: 0.01
+      moe_aux_loss_in_main_loss: true
+    routed_ffn:
+      enabled: false
+      num_experts: 4
+      top_k: 2
+      num_shared_experts: 1
+      segment_size: 1
+      routing_granularity: token
+      router_hidden_dim: 128
+      expert_hidden_dim: 1024
+      residual_scale: 1.0
+      continuity_bias_weight: 0.0
+      global_load_bias_weight: 0.0
+      router_noise_std: 0.0
+      load_balance_loss_weight: 0.01
+      router_z_loss_weight: 0.0001
+      temporal_consistency_loss_weight: 0.01
+      moe_aux_loss_in_main_loss: true
+
+# Loss weights are the full-strength manifold regularizers. The FlowMatchingModel
+# wrapper ramps them by training step and by t^2 so FM remains the primary objective.
+weight_loss_rec_repr_full_body: 1.0
+weight_loss_repr_foot_contact_mse: 0.1
+weight_loss_joint_pos_global: 1.0
+weight_loss_visible_joint_pos_global: 1.0
+weight_loss_joint_vel_global: 0.2
+weight_loss_joint_smooth: 0.01
+weight_loss_foot_skating: 0.01
+start_skating_loss_epoch: 0
+

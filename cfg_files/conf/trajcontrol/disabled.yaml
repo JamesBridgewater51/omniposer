@@ -1,0 +1,8 @@
+# ==============================================================================
+# TrajControl Configuration - Disabled
+# ==============================================================================
+
+enabled: false
+load_pretrained_backbone: false
+pretrained_backbone_path: ""
+

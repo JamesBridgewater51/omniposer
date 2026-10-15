@@ -1,0 +1,38 @@
+# @package _global_
+# ==============================================================================
+# Inference Configuration (Default)
+# ==============================================================================
+# Settings for model inference during testing.
+
+batch_size: 1
+slice_strategy: full_sequence
+overlap_size: 16  # Must be less than (clip_len - 1)
+use_root_init_xy_in_sliding_window_preprocessing: true
+root_init_xy_policy: visible_safe  # visible_safe / visible_mean / legacy_root / zero
+root_init_rot_policy: disabled  # disabled / visible_safe / legacy_gt
+
+# Masking settings
+test_mask_action: egoexo_prior  # Use a valid action name from cfg_files/conf/masking/*.yaml
+test_mask_actions: null  # List for MPI distribution, e.g., ['rohm_upper_body_xyz', 'egoexo_prior']
+
+# Inference steps (for generative models)
+num_inference_steps: 1
+inference_steps_list: null  # List for MPI distribution, e.g., [1, 4, 8]
+
+# Noise settings
+load_noise: false
+load_noise_level: 0
+
+# Additional settings
+cond_fn_with_grad: true
+infill_traj: false
+traj_mask_ratio: 0.0
+
+# Parallel workers (0 = single process)
+num_parallel_inference_workers: 0
+
+# FK model selection
+fk_model_type: auto  # auto / smplx / articulate
+fk_model_path: null  # optional override, otherwise dataset defaults are used
+fk_model_use_pose_blendshape: true
+fk_missing_joint_fill_strategy: identity  # identity / copy_wrists

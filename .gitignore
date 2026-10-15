@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.safetensors
+*.pth
+*.ckpt
+runs/
+test_results/
+data/
+outputs/
+wandb/
+.hydra/
+.DS_Store

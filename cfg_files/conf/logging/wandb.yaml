@@ -1,0 +1,19 @@
+# W&B experiment logging.
+# Offline is the safe default for cluster runs; set WANDB_MODE=online or
+# override logging.wandb.mode=online to sync directly.
+#
+# Leave name/group/tags/notes/id as null for informative deterministic defaults
+# derived from task, training mode, architectures, datasets, masking, run_name,
+# and seed. The deterministic id replaces W&B's random run id in run URLs.
+wandb:
+  enabled: true
+  project: OmniPoser
+  entity: null
+  mode: ${oc.env:WANDB_MODE,offline}
+  name: null
+  group: null
+  tags: []
+  notes: null
+  resume: allow
+  id: null
+  log_code: false

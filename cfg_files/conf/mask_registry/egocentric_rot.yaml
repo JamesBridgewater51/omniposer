@@ -1,0 +1,36 @@
+# ==============================================================================
+# Mask Scheme Registry: Egocentric Settings (XYZ + Rotations)
+# ==============================================================================
+# Egocentric tracking configurations with XYZ positions and rotations.
+
+defaults:
+  - /representation_registry@_global_.representation_registry: xyz_rot
+
+representation_config: xyz_rot
+
+schemes:
+  # Head-only tracking (XYZ + rotation)
+  - name: egocentric_head_xyz_rot
+    visible_ids: [15]
+    topology: smplx_22
+    description: "Egocentric head-only tracking. XYZ position and rotation."
+    modalities:
+      local_positions:
+        visible_ids: [15]
+      R_world_joints:
+        visible_ids: [15]
+      R_root_joints:
+        visible_ids: [15]
+
+  # EgoExo-like probabilistic masking (XYZ + rotation)
+  - name: egoexo_xyz_rot
+    topology: smplx_22
+    allow_time_variation: true
+    description: "EgoExo-like masking with probabilistic joint visibility based on egocentric camera statistics."
+    modalities:
+      local_positions:
+        visible_ids: [1, 2, 4, 5, 7, 8, 15, 16, 17, 18, 19, 20, 21]
+      R_world_joints:
+        visible_ids: [1, 2, 4, 5, 7, 8, 15, 16, 17, 18, 19, 20, 21]
+      R_root_joints:
+        visible_ids: [1, 2, 4, 5, 7, 8, 15, 16, 17, 18, 19, 20, 21]

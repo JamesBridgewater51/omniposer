@@ -1,0 +1,29 @@
+# ==============================================================================
+# Mask Scheme Registry: VR/MoCap Settings (XYZ positions only)
+# ==============================================================================
+# Motion capture configurations with XYZ positions only.
+
+defaults:
+  - /representation_registry@_global_.representation_registry: xyz_only
+
+representation_config: xyz_only
+
+schemes:
+  # 5-point tracking: head + hands + feet (XYZ only)
+  - name: mocap_head_hands_feet_xyz
+    visible_ids: [15, 20, 21, 10, 11]
+    topology: smplx_22
+    description: "5-point MoCap: head + two hands (wrists) + two feet. XYZ positions only."
+    modalities:
+      local_positions:
+        visible_ids: [15, 20, 21, 10, 11]
+        description: "Only head, wrists, and feet positions are visible"
+
+  # 6-point tracking: pelvis + head + hands + feet (XYZ only)
+  - name: mocap_head_hands_feet_pelvis_xyz
+    visible_ids: [0, 15, 20, 21, 10, 11]
+    topology: smplx_22
+    description: "6-point MoCap: pelvis + head + two hands + two feet. XYZ positions only."
+    modalities:
+      local_positions:
+        visible_ids: [0, 15, 20, 21, 10, 11]

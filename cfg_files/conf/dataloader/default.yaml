@@ -1,0 +1,25 @@
+# ==============================================================================
+# DataLoader Configuration
+# ==============================================================================
+
+train_dataloader:
+  batch_size: 384
+  shuffle: true
+  num_workers: 8
+  drop_last: true
+  pin_memory: true
+  persistent_workers: true
+  prefetch_factor: 2
+
+test_dataloader:
+  batch_size: 384
+  shuffle: false
+  num_workers: 8
+  drop_last: false
+  pin_memory: true
+
+# DistributedSampler Configuration (used when ddp.enabled: true)
+distributed_sampler:
+  shuffle: true
+  drop_last: true
+

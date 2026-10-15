@@ -1,0 +1,65 @@
+# ==============================================================================
+# Representation Registry: XYZ-only modality set
+# ==============================================================================
+# For mask schemes that provide ONLY XYZ joint positions (no rotations).
+# Examples: full_body, upper_body_with_root, coco_keypoints_xyz, nokov_full, etc.
+
+topologies:
+  smplx_22:
+    joint_names: ["pelvis", "left_hip", "right_hip", "spine1", "left_knee", "right_knee", "spine2",
+                  "left_ankle", "right_ankle", "spine3", "left_foot", "right_foot", "neck",
+                  "left_collar", "right_collar", "head", "left_shoulder", "right_shoulder",
+                  "left_elbow", "right_elbow", "left_wrist", "right_wrist"]
+    joint_count: 22
+
+routing_groups:
+  body_part_6:
+    topology: smplx_22
+    groups:
+      torso_pelvis: [0, 1, 2, 3, 6, 9]
+      head_neck: [12, 15]
+      left_arm: [13, 16, 18, 20]
+      right_arm: [14, 17, 19, 21]
+      left_leg: [4, 7, 10]
+      right_leg: [5, 8, 11]
+
+modalities:
+  - name: smplx_rot_6d
+    dim: 6
+    is_joint_based: false
+    semantic: trajectory
+  - name: smplx_trans
+    dim: 3
+    is_joint_based: false
+    semantic: trajectory
+  - name: local_positions
+    dim: 66           # 22 joints * 3
+    is_joint_based: true
+    per_joint_dim: 3
+    topology: smplx_22
+    semantic: pose
+  - name: smplx_body_pose_6d
+    dim: 126          # 21 joints * 6
+    is_joint_based: false
+    semantic: pose
+  - name: smplx_betas
+    dim: 10
+    is_joint_based: false
+    semantic: shape
+  - name: foot_contact
+    dim: 4
+    is_joint_based: false
+    semantic: contact
+
+traj_modalities: ["smplx_rot_6d", "smplx_trans"]
+
+# Conditioning modalities for XYZ-only schemes
+# pose explicitly includes traj modalities (smplx_trans, smplx_rot_6d) as global conditioning
+cond_modalities:
+  traj: ["local_positions"]
+  pose: ["local_positions", "smplx_trans", "smplx_rot_6d"]
+  both: ["local_positions"]
+
+predicted_modalities:
+  traj: ["smplx_rot_6d", "smplx_trans"]
+  pose: ["smplx_body_pose_6d", "smplx_betas", "foot_contact"]

@@ -1,0 +1,24 @@
+torch>=2.1
+torchvision
+hydra-core>=1.3
+omegaconf>=2.3
+safetensors
+einops
+cprint
+rotary-embedding-torch
+numpy
+scipy
+pandas
+matplotlib
+opencv-contrib-python
+Pillow
+tqdm
+joblib
+blobfile
+smplx
+trimesh
+pyrender
+open3d            # visualization only
+moviepy           # visualization only
+mpi4py            # optional, multi-process evaluation
+projectaria_tools # optional, EgoExo4D evaluation only

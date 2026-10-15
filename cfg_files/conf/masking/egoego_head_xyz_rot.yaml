@@ -1,0 +1,19 @@
+# ==============================================================================
+# Masking Configuration (Declarative Actions + Mixture)
+# ==============================================================================
+
+same_batch_for_schedules: true
+schedule_per_step: all
+
+actions:
+  # EgoEgo: head-only (XYZ + rotations)
+  - name: egoego_head_xyz_rot
+    type: registry
+    scheme: egocentric_head_xyz_rot
+
+
+mixture:
+  - until_step: null
+    weights:
+      egoego_head_xyz_rot: 1.0
+     

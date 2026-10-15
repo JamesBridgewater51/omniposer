@@ -1,0 +1,13 @@
+# ==============================================================================
+# Warmup Cosine Learning Rate Scheduler Configuration
+# ==============================================================================
+# Schedulers are instantiated at runtime. For LambdaLR, the lr_lambda function
+# is created at runtime using warmup_steps and num_steps from training config.
+
+type: warmup_cosine
+warmup_steps: 4000
+eta_min: 0.0
+# For step scheduler (if type: step)
+decay_steps: 10000
+decay_gamma: 0.1
+

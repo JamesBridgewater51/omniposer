@@ -1,0 +1,47 @@
+# @package _global_
+# ==============================================================================
+# EgoExo Test Dataset Configuration
+# ==============================================================================
+# This config populates test_datasets at the global config level
+
+test_datasets:
+  - dataset:
+      class_name: data_sets.dataset_egoexo.DatasetEgoExo
+      opt:
+        name: "test_dataset"            # just name
+        dataset_type: "egoexo"         
+        dataloader_batch_size: 1     # batch size 1 | 16 | 32 | 48 | 64 | 128
+        num_input: 1                  # number of tracking devices  3 | 4
+        window_size: 33
+        single_joint: true
+        use_aria: true
+        split: "val" #Evaluate on val set
+        use_pseudo: false #Flag to use pseudo-groundtruth annotations for training.
+        coord: "" #null for per-frame normalization, "aria" for first-frame normalization, "global" for global coordinates
+        root: "datasets/egoexo-default" #ADD PATH TO EGO-EXO4D ANNOTATIONS
+
+      norm_params_path: ckpts/both_Nov_17_discriminative_clip_len_33/AMASS_norm_params.pkl
+      
+      # NOTE: `input_noise` must be true (as in training); if false at test time the batch lacks the motion_repr_noisy key, while `process_batch_cond` inherits train_config.representation.input_noise and expects it.
+      input_noise: true
+      noise_std_joint: 0.0
+      noise_std_smplx_global_rot: 0.0
+      noise_std_smplx_body_rot: 0.0
+      noise_std_smplx_trans: 0.0
+      noise_std_smplx_betas: 0.0
+
+      clip_len: 33
+      spacing: 2
+      mean_std: false
+      norm_strategy: meanstd
+      slice_strategy: ${slice_strategy}
+      body_model_path: data/body_models/smplx_model
+      joints_num: 22
+      disable_cache: true
+      logging_enabled: true
+      use_ddp: false
+
+# Dataset name for routing logic
+dataset_name: ego_exo
+
+

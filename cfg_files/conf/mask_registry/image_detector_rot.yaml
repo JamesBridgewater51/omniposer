@@ -1,0 +1,23 @@
+# ==============================================================================
+# Mask Scheme Registry: 3D Image Detector Settings (XYZ + Rotations)
+# ==============================================================================
+# 3D keypoint detection configurations with XYZ positions and rotations.
+
+defaults:
+  - /representation_registry@_global_.representation_registry: xyz_rot
+
+representation_config: xyz_rot
+
+schemes:
+  # COCO with estimated rotations
+  - name: coco_keypoints_xyz_rot
+    visible_ids: [0, 1, 2, 4, 5, 7, 8, 12, 15, 16, 17, 18, 19, 20, 21]
+    topology: smplx_22
+    description: "COCO keypoints with estimated rotations. XYZ positions and rotations."
+    modalities:
+      local_positions:
+        visible_ids: [0, 1, 2, 4, 5, 7, 8, 12, 15, 16, 17, 18, 19, 20, 21]
+      R_world_joints:
+        visible_ids: [0, 1, 2, 4, 5, 7, 8, 12, 15, 16, 17, 18, 19, 20, 21]
+      R_root_joints:
+        visible_ids: [0, 1, 2, 4, 5, 7, 8, 12, 15, 16, 17, 18, 19, 20, 21]

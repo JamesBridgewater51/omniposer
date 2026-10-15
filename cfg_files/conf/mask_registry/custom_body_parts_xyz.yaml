@@ -1,0 +1,74 @@
+# ==============================================================================
+# Mask Scheme Registry: Custom Body Part Configurations (XYZ positions only)
+# ==============================================================================
+# Customized body part tracking configurations with XYZ positions only.
+
+defaults:
+  - /representation_registry@_global_.representation_registry: xyz_only
+
+representation_config: xyz_only
+
+schemes:
+  # Upper body with root (XYZ only)
+  - name: upper_body_with_root_xyz
+    visible_ids: [0, 3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+    topology: smplx_22
+    description: "Upper body with pelvis root. XYZ positions only."
+    modalities:
+      local_positions:
+        visible_ids: [0, 3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+
+  # Lower body with root (XYZ only)
+  - name: lower_body_with_root_xyz
+    visible_ids: [0, 1, 2, 4, 5, 7, 8, 10, 11]
+    topology: smplx_22
+    description: "Lower body with pelvis root. XYZ positions only."
+    modalities:
+      local_positions:
+        visible_ids: [0, 1, 2, 4, 5, 7, 8, 10, 11]
+
+  # Arms only (for gesture recognition)
+  - name: arms_only_xyz
+    visible_ids: [16, 17, 18, 19, 20, 21]
+    topology: smplx_22
+    description: "Arms only (shoulders, elbows, wrists). XYZ positions."
+    modalities:
+      local_positions:
+        visible_ids: [16, 17, 18, 19, 20, 21]
+
+  # Legs only (for locomotion analysis)
+  - name: legs_only_xyz
+    visible_ids: [1, 2, 4, 5, 7, 8, 10, 11]
+    topology: smplx_22
+    description: "Legs only (hips, knees, ankles, feet). XYZ positions."
+    modalities:
+      local_positions:
+        visible_ids: [1, 2, 4, 5, 7, 8, 10, 11]
+
+  # Spine chain only
+  - name: spine_chain_xyz
+    visible_ids: [0, 3, 6, 9, 12, 15]
+    topology: smplx_22
+    description: "Spine chain only (pelvis to head). XYZ positions."
+    modalities:
+      local_positions:
+        visible_ids: [0, 3, 6, 9, 12, 15]
+
+  # Full body visibility (baseline)
+  - name: full_body
+    visible_ids: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+    topology: smplx_22
+    description: "All 22 SMPL body joints visible."
+
+  # Upper body with root (for evaluation)
+  - name: upper_body_with_root
+    visible_ids: [0, 3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+    topology: smplx_22
+    description: "Pelvis/root plus torso, neck, head, shoulders, elbows, and wrists."
+
+  # Random masking (runtime sampling)
+  - name: random
+    visible_ids: []
+    topology: smplx_22
+    allow_time_variation: true
+    description: "Random joint masking - visibility determined at runtime."

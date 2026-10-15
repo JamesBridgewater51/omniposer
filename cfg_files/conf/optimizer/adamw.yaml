@@ -1,0 +1,19 @@
+# ==============================================================================
+# AdamW Optimizer Configuration
+# ==============================================================================
+# Optimizers are instantiated using construct_class_by_name.
+# For 'both' task: traj_opt and pose_opt are used.
+# For 'traj' or 'pose' task: only opt is used.
+
+traj_opt:
+  class_name: torch.optim.AdamW
+  lr: 0.0002
+  betas: [0.9, 0.999]
+  weight_decay: 0.1
+
+pose_opt:
+  class_name: torch.optim.AdamW
+  lr: 0.0002
+  betas: [0.9, 0.999]
+  weight_decay: 0.1
+

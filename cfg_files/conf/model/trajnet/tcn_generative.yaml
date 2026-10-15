@@ -1,0 +1,61 @@
+# ==============================================================================
+# TrajNet Configuration - TCN Architecture (Generative)
+# ==============================================================================
+
+class_name: model.trajnet.TrajNet
+
+# Core options
+cano_jts_pos: false
+use_masked_conditioner: true
+abstract_model_type: generative
+
+# Network configuration (architecture)
+network_config:
+  class_name: model.architectures.UNetTCN
+  mid_dim: 512
+  time_dim: 32
+  input_t: true
+  generative_model_type: flow_matching
+  moe:
+    enabled: false
+    num_experts: 4
+    top_k: 2
+    num_shared_experts: 1
+    segment_size: 8
+    routing_granularity: segment
+    router_hidden_dim: 128
+    expert_hidden_dim: 512
+    grouping_name: body_part_6
+    residual_scale: 1.0
+    continuity_bias_weight: 0.0
+    global_load_bias_weight: 0.0
+    router_noise_std: 0.0
+    load_balance_loss_weight: 0.01
+    router_z_loss_weight: 0.0001
+    temporal_consistency_loss_weight: 0.01
+    moe_aux_loss_in_main_loss: true
+    stage_names:
+      - diff_enc1
+      - diff_enc2
+      - diff_enc3
+      - diff_enc4
+      - diff_mid_block1
+      - diff_mid_block2
+      - diff_dec4
+      - diff_dec3
+      - diff_dec2
+      - diff_dec1
+
+# Frequency transform (disabled)
+use_freq_transform: false
+freq_config:
+  method: band_gating
+  num_bands: 4
+
+# Loss weights are the full-strength manifold regularizers. The FlowMatchingModel
+# wrapper ramps them by training step and by t^2 so FM remains the primary objective.
+weight_loss_root_rec_repr: 1.0
+weight_loss_root_pos_global: 1.0
+weight_loss_root_vel_global: 0.2
+weight_loss_root_smooth: 0.01
+

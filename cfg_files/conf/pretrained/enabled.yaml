@@ -1,0 +1,8 @@
+# ==============================================================================
+# Pretrained Model Loading - Enabled
+# ==============================================================================
+# Set the appropriate paths when using this config
+
+load_model: true
+# NOTE: example model_path: runs/<run>/best_model_stage_0.safetensors — the loader prepends 'TrajNet_' / 'PoseNet_' to the file basename when loading each stream's pretrained model.
+model_path: ""      # Path to pretrained model checkpoint, 

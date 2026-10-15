@@ -1,0 +1,41 @@
+# @package _global_
+# ==============================================================================
+# AMASS Train Dataset Configuration
+# ==============================================================================
+# This config populates train_datasets at the global config level
+
+train_datasets:
+  - dataset:
+      class_name: data_sets.dataset_amass.DatasetAMASS
+      preprocessed_dataset_root: datasets/AMASS_smplx_preprocessed
+      split: train
+      datasets: ['HumanEva', 'HDM05', 'MoSh', 'Transitions', 'ACCAD', 'BMLhandball', 'BMLmovi', 'BMLrub', 'CMU', 'DFaust', 'Eyes_Japan_Dataset', 'PosePrior', 'SSM', 'GRAB', 'SOMA']
+      cano_jts_pos: false
+      input_noise: true
+      sep_noise: false
+      noise_std_joint: 0.0
+      noise_std_smplx_global_rot: 2.0
+      noise_std_smplx_body_rot: 2.0
+      noise_std_smplx_trans: 0.03
+      noise_std_smplx_betas: 0.0
+      load_noise: false
+      align_to_yaxis: true
+      clip_len: 33
+      spacing: 1
+      mean_std: false
+      norm_strategy: meanstd
+      norm_params_path: ""
+      slice_strategy: random_uniform_len
+      # Motion-aware sampling parameters
+      motion_weight_strategy: combined
+      motion_weight_temperature: 1.0
+      motion_weight_min: 0.1
+      motion_fps: 30.0
+      body_model_path: ${training.body_model_path}
+      logging_enabled: true
+      joints_num: 22
+      head_joint_idx: [15]
+      torso_joint_idx: [12, 9, 6, 3]
+      clip_percentiles: [1.0, 99.0]
+      disable_cache: false
+      use_ddp: ${ddp.enabled}

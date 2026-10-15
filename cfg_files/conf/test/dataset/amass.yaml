@@ -1,0 +1,38 @@
+# @package _global_
+# ==============================================================================
+# AMASS Test Dataset Configuration
+# ==============================================================================
+# This config populates test_datasets at the global config level
+
+test_datasets:
+  - dataset:
+      class_name: data_sets.dataset_amass.DatasetAMASS
+      preprocessed_dataset_root: datasets/AMASS_smplx_preprocessed
+      split: test
+      datasets: ['TCDHands', 'TotalCapture', 'SFU']
+      cano_jts_pos: false
+      align_to_yaxis: true
+
+      # NOTE: `input_noise` must be true (as in training); if false at test time the batch lacks the motion_repr_noisy key, while `process_batch_cond` inherits train_config.representation.input_noise and expects it.
+      input_noise: true
+      noise_std_joint: 0.0
+      noise_std_smplx_global_rot: 0.0
+      noise_std_smplx_body_rot: 0.0
+      noise_std_smplx_trans: 0.0
+      noise_std_smplx_betas: 0.0
+
+      clip_len: 33
+      spacing: 2
+      mean_std: false
+      norm_strategy: meanstd
+      norm_params_path: null
+      slice_strategy: ${slice_strategy}
+      body_model_path: data/body_models/smplx_model
+      joints_num: 22
+      disable_cache: true
+      logging_enabled: true
+      use_ddp: false
+
+# Dataset name for routing logic
+dataset_name: amass
+

@@ -1,0 +1,10 @@
+# ==============================================================================
+# Experiment: Flow Matching Model (Generative)
+# ==============================================================================
+# This experiment provides value overrides for flow matching training.
+#
+# Usage:
+#   python main_train.py training=flow_matching model/trajnet=tcn_generative model/posenet=dit_generative training_model=flow_matching
+# ==============================================================================
+
+task: both

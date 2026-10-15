@@ -1,0 +1,49 @@
+# ==============================================================================
+# Mask Scheme Registry: Optical Tracker Systems (XYZ + Rotations)
+# ==============================================================================
+# Optical motion capture system configurations with XYZ positions and rotations.
+
+defaults:
+  - /representation_registry@_global_.representation_registry: xyz_rot
+
+representation_config: xyz_rot
+
+schemes:
+  # Xsens MVN full-body IMU tracking
+  - name: xsens_full
+    visible_ids: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+    topology: smplx_22
+    description: "Xsens MVN full-body IMU tracking. XYZ positions and rotations."
+    modalities:
+      local_positions:
+        visible_ids: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+      R_world_joints:
+        visible_ids: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+      R_root_joints:
+        visible_ids: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+
+  # Xsens upper body only
+  - name: xsens_upper_body
+    visible_ids: [0, 3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+    topology: smplx_22
+    description: "Xsens upper body tracking only."
+    modalities:
+      local_positions:
+        visible_ids: [0, 3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+      R_world_joints:
+        visible_ids: [0, 3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+      R_root_joints:
+        visible_ids: [0, 3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+
+  # OptiTrack rigid body tracking (similar to VR setup)
+  - name: optitrack_rigid_body
+    visible_ids: [0, 15, 20, 21, 10, 11]
+    topology: smplx_22
+    description: "OptiTrack rigid body tracking: 6 tracked objects with 6-DoF."
+    modalities:
+      local_positions:
+        visible_ids: [0, 15, 20, 21, 10, 11]
+      R_world_joints:
+        visible_ids: [0, 15, 20, 21, 10, 11]
+      R_root_joints:
+        visible_ids: [0, 15, 20, 21, 10, 11]

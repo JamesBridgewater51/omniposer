@@ -1,0 +1,36 @@
+# ==============================================================================
+# Mask Scheme Registry: VR/MoCap Settings (XYZ + Rotations)
+# ==============================================================================
+# Motion capture configurations with XYZ positions and rotations.
+
+defaults:
+  - /representation_registry@_global_.representation_registry: xyz_rot
+
+representation_config: xyz_rot
+
+schemes:
+  # 5-point tracking: head + hands + feet (XYZ + rotations)
+  - name: mocap_head_hands_feet_xyz_rot
+    visible_ids: [15, 20, 21, 10, 11]
+    topology: smplx_22
+    description: "5-point MoCap: head + two hands + two feet. XYZ positions and rotations."
+    modalities:
+      local_positions:
+        visible_ids: [15, 20, 21, 10, 11]
+      R_world_joints:
+        visible_ids: [15, 20, 21, 10, 11]
+      R_root_joints:
+        visible_ids: [15, 20, 21, 10, 11]
+
+  # 6-point tracking: pelvis + head + hands + feet (XYZ + rotations)
+  - name: mocap_head_hands_feet_pelvis_xyz_rot
+    visible_ids: [0, 15, 20, 21, 10, 11]
+    topology: smplx_22
+    description: "6-point MoCap: pelvis + head + two hands + two feet. XYZ positions and rotations."
+    modalities:
+      local_positions:
+        visible_ids: [0, 15, 20, 21, 10, 11]
+      R_world_joints:
+        visible_ids: [0, 15, 20, 21, 10, 11]
+      R_root_joints:
+        visible_ids: [0, 15, 20, 21, 10, 11]
