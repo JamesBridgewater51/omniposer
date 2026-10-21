@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="description" content="OmniPoser recovers full-body 3D human motion from heterogeneous sparse observations using flow matching, observation-visibility-routed Mixture-of-Experts(MoE) module, and test-time flow-matching guidance.">
+  <meta name="keywords" content="human motion recovery, flow matching, mixture of experts, sparse sensors, IMU, AR/VR">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OmniPoser · Unified Full-Body Motion Recovery from Heterogeneous Sparse Observations</title>
+
+  <meta property="og:title" content="OmniPoser · Unified Full-Body Motion Recovery from Heterogeneous Sparse Observations">
+  <meta property="og:description" content="Unified Full-body motion recovery from heterogeneous sparse observations with flow matching, observation-visibility-routed Mixture-of-Experts (MoE) module and test-time flow-matching guidance.">
+  <meta property="og:image" content="./static/images/teaser_meshes.jpg">
+  <meta property="og:type" content="website">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro&amp;subset=latin,latin-ext" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="stylesheet" href="./static/css/omniposer.css">
+  <link rel="stylesheet" href="./static/css/hero-wall.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script defer="" src="./static/js/fontawesome.all.min.js"></script>
+
+<script>
+  // section screenshot hook for closed-loop review: ?sec=<id> scrolls the
+  // section into view on load so headless captures land on the right module.
+  // ?shot=<id> is the deterministic variant: it hides every element outside
+  // the target's ancestor chain (review-only, no user-facing effect), so the
+  // module renders at the top of the page without any scrolling — programmatic
+  // scrolls are unreliable under headless virtual-time captures on this page
+  // (sticky hero + reveal-on-scroll).
+  (function () {
+    const q = new URLSearchParams(location.search);
+    const s = q.get('shot');
+    if (s) {
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.rv').forEach(e => e.classList.add('in'));
+        const selected = document.getElementById(s);
+        // A comparator's controls are siblings; keep its whole card visible.
+        const t = selected && selected.classList.contains('cmp') ? selected.parentElement : selected;
+        if (t) {
+          // screenshot-only: a section that rides over the shrinking hero
+          // (negative margin-top) would land off-screen once the hero is
+          // hidden, so neutralize the pull for the capture.
+          t.style.marginTop = '0';
+          const top = t.closest('body > *');
+          document.querySelectorAll('body > *').forEach(n => { if (n !== top) n.style.display = 'none'; });
+          let anc = t;
+          while (anc.parentElement && anc.parentElement !== document.body) {
+            Array.from(anc.parentElement.children).forEach(n => { if (n !== anc) n.style.display = 'none'; });
+            anc = anc.parentElement;
+          }
+        }
+      });
+      return;
+    }
+    const m = q.get('sec');
+    if (!m) return;
+    const el = document.getElementById(m);
+    if (el) setTimeout(() => el.scrollIntoView({block: 'start'}), 300);
+  })();
+</script>
+</head>
+
+<body class="op">
+
+  <nav class="navbar hw-navbar" id="op-navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="#top">
+        <span class="brand-word"><span class="bracket">[</span>OmniPoser<span class="bracket">]</span></span>
+      </a>
+      <button type="button" class="navbar-burger" aria-label="Toggle navigation" aria-controls="op-nav-menu" aria-expanded="false">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="navbar-menu" id="op-nav-menu">
+      <div class="navbar-start" style="flex-grow:1;justify-content:center;gap:.2rem">
+        <a class="navbar-item" href="#overview">Overview</a>
+        <a class="navbar-item" href="#method">Method</a>
+
+        <a class="navbar-item" href="#results">Results</a>
+        <a class="navbar-item" href="#analysis">Analysis</a>
+
+
+      </div>
+    </div>
+  </nav>
+
+  <!-- ==================== HERO VIDEO WALL ====================
+       full-bleed wall of looping evaluation clips (static/videos/wall.json).
+       The full grid shows immediately; title/authors ride in a bottom-anchored
+       overlay above a scrim; the navbar is transparent over the hero and turns
+       frosted-solid after it. On scroll the whole hero shrinks to half height. -->
+
+  <section class="hw-driver" id="top" aria-label="OmniPoser evaluation clips across AMASS, AIST++, TotalCapture and 3DPW">
+    <div class="hw-sticky">
+      <div class="hw-scale" id="hw-scale">
+        <canvas id="hero-wall-canvas"></canvas>
+        <div class="hw-scrim" aria-hidden="true"></div>
+        <div class="hw-overlay" id="hw-overlay">
+          <div class="container is-max-desktop has-text-centered">
+            <h1 class="hw-title">OmniPoser: Unified Full-Body Motion Recovery from
+              Heterogeneous Sparse Observations</h1>
+            <div class="hw-authors">
+              <span class="author-block"><b>Minghao Liu</b><sup>1,2</sup>,</span>
+              <span class="author-block"><b>Tutian Tang</b><sup>1,2</sup>,</span>
+              <span class="author-block"><b>Wenqiang Xu</b><sup>1</sup>,</span>
+              <span class="author-block"><b>Cewu Lu</b><sup>1,3,4</sup>,</span>
+              <span class="author-block"><b>Qiaojun Yu</b><sup>1,2,*</sup></span>
+            </div>
+            <div class="hw-affils">
+              <span class="author-block"><sup>1</sup>Shanghai Jiao Tong University,</span>
+              <span class="author-block"><sup>2</sup>Shanghai Artificial Intelligence Laboratory,</span>
+              <span class="author-block"><sup>3</sup>Noematrix,</span>
+              <span class="author-block"><sup>4</sup>Shanghai Innovation Institute</span>
+            </div>
+            <div class="hw-affils">*Corresponding author: Qiaojun Yu</div>
+            <div class="publication-links hw-links">
+              <span class="link-block">
+                <a href="#gallery" class="hw-btn">
+                  <span class="icon"><i class="fas fa-play-circle"></i></span>
+                  <span>Videos</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://github.com/JamesBridgewater51/omniposer" class="hw-btn" aria-label="Earlier conference implementation (ECCV 2026)">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Earlier code (ECCV 2026)</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hw-hint" aria-hidden="true"><i class="fas fa-chevron-down"></i></div>
+    </div>
+  </section>
+
+  <!-- ==================== OVERVIEW ==================== -->
+
+  <section class="sec hw-next" id="overview">
+    <div class="container is-max-desktop"><div class="sec-head rv">
+        <div class="kicker">01 · Overview</div>
+        <h2 class="sec-title">Heterogeneous Sparse Observations</h2>
+
+
+      <p class="sec-sub">Recovering full-body 3D human motion from sparse observations is challenging due to sensor noise, occulusion, and different combinations of sensor signals. OmniPoser is a unified framework that recovers full-body motion from heterogeneous sparse observations, such as 3D joint positions, sparse IMU rotations, and head-mounted 6-DoF poses.</p><p class="sec-sub">Built on conditional flow matching, OmniPoser uses a decoupled dual-stream backbone to separate the global trajectory from the body pose and recover full-body motion within a single step.</p><p class="sec-sub">To handle varying observation patterns, OmniPoser uses an observation-visibility-routed Mixture-of-Experts (MoE) module that selects experts based on which body parts are observed. To achieve fast inference speed, test-time flow-matching guidance corrects predictions toward available measurements with a single gradient step.</p></div></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ==================== METHOD ==================== -->
+
+  <section class="sec" id="method">
+    <div class="container is-max-desktop">
+      <div class="sec-head rv">
+        <div class="kicker">02 · Method</div>
+        <h2 class="sec-title">Method</h2>
+
+      <div class="fig-card rv">
+        <a href="./static/images/pipeline.png" target="_blank" rel="noopener" aria-label="Open the full-size method figure">
+          <img src="./static/images/pipeline.png" alt="OmniPoser pipeline: masked observations, expert routing, sequential trajectory and pose recovery, and guidance.">
+        </a>
+        <div class="fig-cap"> (A–B) OmniPoser maps heterogeneous sparse observations, such as 3D joint positions, sparse IMU rotations, and head-mounted 6-DoF poses, into a shared observation representation. (C) The observation-visibility-routed Mixture-of-Experts (MoE) module activates experts according to the observation pattern. (D) The conditional flow matching first recovers the global trajectory, then predicts body pose and foot contact conditioned on that trajectory. (E) Test-time guidance updates the initial noise in a single gradient step to correct the single-step prediction toward available sensor measurements. </div>
+      </div>
+    <div class="subsection" id="representation-sec" style="margin-top: 2.5rem; scroll-margin-top: 5rem;"><div class="sec-head"><h3 class="sec-title" style="font-size: 1.4rem;">Observation and Motion Representation</h3><p class="sec-sub">The motion representation can include joint positions, joint rotations, root translation and orientation.  Any subset of these terms may be available in a frame.</p><p class="sec-sub">We concatenate these observations into a tensor <math xmlns="http://www.w3.org/1998/Math/MathML"><mi mathvariant="bold">O</mi></math>. The binary visibility mask for <math xmlns="http://www.w3.org/1998/Math/MathML"><mi mathvariant="bold">O</mi></math> is <math xmlns="http://www.w3.org/1998/Math/MathML"><mi mathvariant="bold">M</mi></math>, indicating which entries are observed. For joint-based terms, visibility is specified per joint and frame; for global terms, it is specified per frame.</p><p class="sec-sub">Applying the visibility mask gives the network's observation input:</p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><mi mathvariant="bold">M</mi><mo>⊙</mo><mi mathvariant="bold">O</mi></mrow></math></div></div><div class="subsection" style="margin-top: 2.4rem;"><h3 class="sec-title" style="font-size: 1.4rem; margin-bottom: 0.8rem;">Conditional Flow-Matching</h3><p class="sec-sub">Conditional flow matching learns to transform a randomly sampled noise into full-body motion conditioned on available measurements. The trajectory stream first recovers global translation and orientation. The pose stream then uses that trajectory to recover local joint rotations, body shape, and foot contact. We use single-step inference.</p></div><div class="subsection" style="margin-top: 2.4rem;"><h3 class="sec-title" style="font-size: 1.4rem; margin-bottom: 0.8rem;">Observation-Visibility-Routed Mixture of Experts (MoE)</h3><p class="sec-sub">A router selects active experts from a shared pool using the visibility information, so related patterns can reuse the same expert subsets.</p><p class="sec-sub">In addition to the routed experts, each routed module contains always-active shared experts, following DeepSeekMoE. The shared experts process every input and thus capture the computation paths shared across observation patterns, while the routed experts capture pattern-specific paths.</p><h4 style="margin-top: 1rem;">Expert-wise FiLM</h4><p class="sec-sub">Routing chooses which experts to use; feature-wise linear modulation (FiLM) further adapts expert outputs by applying learned scales and shifts to their output features. FiLM is conditioned on the same observation-pattern information as the router.</p></div><div class="subsection" id="guidance-sec" style="margin-top: 3rem; scroll-margin-top: 5rem;">
+    <div class="container is-max-desktop"><div class="sec-head"><h3 class="sec-title" style="font-size: 1.4rem;">Test-Time Flow-Matching Guidance</h3><p class="sec-sub">Single-step flow-matching yields fast inference, but usually reduces prediction accuracy. Test-time flow-matching guidance updates the initial noise within one gradient step to correct the one-step predictions towards available sensor measurements.</p></div><div class="guidance-equation" style="overflow-x: auto; padding: 0.5rem 0px;"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow>
+    <msub>
+      <mover>
+        <mi mathvariant="bold">x</mi>
+        <mo accent="true">^</mo>
+      </mover>
+      <mn>1</mn>
+    </msub>
+    <mo>(</mo>
+    <mi mathvariant="bold">z</mi>
+    <mo>)</mo>
+    <mo>=</mo>
+    <mi mathvariant="bold">z</mi>
+    <mo>+</mo>
+    <mover>
+      <mi mathvariant="bold">v</mi>
+      <mo accent="true">¯</mo>
+    </mover>
+    <mo>,</mo>
+    <mi mathvariant="bold">z</mi>
+    <mo>=</mo>
+    <msub>
+      <mi mathvariant="bold">x</mi>
+      <mn>0</mn>
+    </msub>
+    <mtext> initially</mtext>
+  </mrow>
+</math></div><div class="guidance-equation" style="overflow-x: auto; padding: 0.5rem 0px;"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi mathvariant="bold">g</mi><mo>=</mo><msub><mo>∇</mo><mi mathvariant="bold">z</mi></msub><msub><mi>E</mi><mtext>obs</mtext></msub><mo>(</mo><mi mathvariant="normal">SMPL</mi><mo>(</mo><msub><mover><mi mathvariant="bold">x</mi><mo accent="true">^</mo></mover><mn>1</mn></msub><mo>(</mo><mi mathvariant="bold">z</mi><mo>)</mo><mo>)</mo><mo>)</mo></mrow></math></div><div class="guidance-equation" style="overflow-x: auto; padding: 0.5rem 0px;"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msup><mi mathvariant="bold">z</mi><mo>⋆</mo></msup><mo>=</mo><mi mathvariant="bold">z</mi><mo>−</mo><mi>η</mi><mi mathvariant="bold">g</mi><mo>,</mo><mspace width="1em"></mspace><mtext>output </mtext><msub><mover><mi mathvariant="bold">x</mi><mo accent="true">^</mo></mover><mn>1</mn></msub><mo>(</mo><msup><mi mathvariant="bold">z</mi><mo>⋆</mo></msup><mo>)</mo></mrow></math></div><dl style="display: grid; grid-template-columns: max-content minmax(0px, 1fr); gap: 0.4rem 1rem; margin: 1rem 0px;"><dt><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi mathvariant="bold">x</mi><mn>0</mn></msub></math></dt><dd>Gaussian source sample</dd><dt><math xmlns="http://www.w3.org/1998/Math/MathML"><mover><mi mathvariant="bold">v</mi><mo accent="true">¯</mo></mover></math></dt><dd>Conditional flow evaluated and detached at <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>τ</mi><mo>=</mo><mn>0</mn></math>, held fixed during guidance</dd><dt><math xmlns="http://www.w3.org/1998/Math/MathML"><mi mathvariant="bold">z</mi></math></dt><dd>Differentiable source variable initialized to <math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi mathvariant="bold">x</mi><mn>0</mn></msub></math></dd><dt><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mover><mi mathvariant="bold">x</mi><mo accent="true">^</mo></mover><mn>1</mn></msub><mo>(</mo><mi mathvariant="bold">z</mi><mo>)</mo></math></dt><dd>Euler update using the source variable and fixed conditional flow</dd><dt><math xmlns="http://www.w3.org/1998/Math/MathML"><mi mathvariant="normal">SMPL</mi></math></dt><dd>Forward kinematics of SMPL, a parametric human-body model that maps pose and shape to body geometry</dd><dt><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>E</mi><mtext>obs</mtext></msub></math></dt><dd>Observation discrepancy after SMPL forward kinematics, computed using available measurements</dd><dt><math xmlns="http://www.w3.org/1998/Math/MathML"><mi mathvariant="bold">g</mi></math></dt><dd>Gradient of the observation discrepancy with respect to the source variable</dd><dt><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>η</mi></math></dt><dd>Guidance gradient step size</dd></dl><p class="sec-sub">The gradient step updates only the global trajectory and local joint rotation entries of <math xmlns="http://www.w3.org/1998/Math/MathML"><mi mathvariant="bold">z</mi></math>. The body shape and foot contact source entries remain unchanged. The updated source gives the final guided prediction.</p></div>
+  </div></div></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ==================== RESULTS ==================== -->
+
+  <section class="sec" id="results">
+    <div class="container is-max-desktop">
+      <div class="sec-head rv">
+        <div class="kicker">03 · Results</div>
+        <h2 class="sec-title">Results</h2>
+
+      <p class="sec-sub">The figure shows eight metrics across five benchmarks, normalized to a 0–100 scale. <strong>Points farther outward indicates better performance.</strong> Colored lines denote unified models; black markers report specialist methods on certain metrics.</p></div>
+
+      <div class="fig-card rv"><a href="./static/images/teaser_right.png" target="_blank" rel="noopener"><img src="./static/images/teaser_right.png" alt="Radar chart of eight metrics over five benchmarks; farther outward is better."></a><div class="fig-cap">Performance overview.</div></div><div class="subsection results-detail-intro" style="margin-top:2.4rem"><h3 class="sec-title" style="font-size:1.4rem;margin-bottom:.8rem">Detailed Quantitative Results</h3><p class="sec-sub">For a closer comparison, the chart below reports results across benchmarks and observation settings. Use it to examine the Dense, MoE, and final variants of OmniPoser and compare them with other unified and specialist methods.</p></div><div class="chart-card rv">
+        <div style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:space-between;margin-bottom:1.4rem">
+          <select id="bars-setting" class="op-select"></select>
+          <span class="note" id="bars-note"></span>
+        </div>
+        <div id="bars-host"></div>
+        <p class="note" style="margin-top:1rem;text-align:right">Choose a benchmark and observation setting. The chart reports mean per-joint position error (MPJPE) in millimeters; <strong>lower is better</strong>.</p>
+      </div>
+<details class="results-model-notes" style="margin-top:1rem"><summary>Model definitions and training scope</summary><p class="note">Unified means that one model handles different observation patterns within a training domain; separate domains use separate checkpoints.</p><p class="note">Ours-U (Dense) is dense unified model. Ours-U (MoE) introduces visibility-routed experts, and Ours-U (final) adds test-time flow-matching guidance to that model. RoHM-U uses the RoHM architecture and trains on the same observation patterns as Ours-U; RoHM++-U additionally uses setting-specific input encoders. Ours-S is trained for a specific observation setting. Rows without -U denote specialist models trained for individual settings.</p></details>
+
+    <div class="subsection" style="margin-top: 2.4rem;"><h3 class="sec-title" style="font-size: 1.4rem; margin-bottom: 0.8rem;">Inference Speed</h3><p class="sec-sub" style="margin-bottom: 0.7rem;">On an NVIDIA A40 GPU, full model inference takes 3.0 ms per frame, corresponding to over 300 FPS.</p><table class="table is-fullwidth"><thead><tr><th>Step</th><th>Time per frame (ms)</th></tr></thead><tbody><tr><td>Trajectory stream</td><td>0.4</td></tr><tr><td>Pose stream</td><td>2.0</td></tr><tr><td>Test-Time Flow-Matching Guidance</td><td>0.6</td></tr><tr><td>Full model</td><td>3.0</td></tr></tbody></table></div><div class="subsection" id="gallery" style="margin-top: 3rem; scroll-margin-top: 5rem;">
+    <div class="container is-max-desktop">
+      <div class="sec-head rv">
+        <div class="kicker">qualitative results</div>
+        <h3 class="sec-title" style="font-size: 1.4rem;">Prediction vs. Ground Truth</h3>
+
+      <p class="sec-sub">Purple shows predictions; green shows ground truth.</p></div>
+
+      <div class="rv" style="margin-top:2.4rem">
+        <div class="cmp" id="cmp-0" data-pred="./static/videos/candidate-amass-legal-master4-20261020-v1/0018_XinJiang002-imu_6_root_leaf_xyz_rot/pred.mp4" data-gt="./static/videos/candidate-amass-legal-master4-20261020-v1/0018_XinJiang002-imu_6_root_leaf_xyz_rot/gt.mp4">
+          <video class="cmp-a" id="cmp-a" muted="" playsinline="" preload="auto" aria-hidden="true"></video>
+          <video class="cmp-b" id="cmp-b" muted="" playsinline="" preload="auto" aria-hidden="true"></video>
+          <canvas class="cmp-output" role="img" aria-label="Comparison of prediction and ground truth on matching camera frames; drag the vertical line to change the comparison"></canvas>
+          <div class="cmp-handle" id="cmp-handle" aria-hidden="true"></div>
+          <span class="cmp-tag l">prediction</span>
+          <span class="cmp-tag r">ground truth</span>
+        </div>
+        <div class="cmp-controls" data-comparator="cmp-0">
+          <label class="cmp-wipe-label">Compare <input class="cmp-wipe" type="range" min="0" max="100" step="1" value="50" aria-label="Comparison divider position" aria-valuetext="50% prediction, 50% ground truth" aria-controls="cmp-0"></label>
+          <button class="chip cmp-play" type="button" aria-controls="cmp-0">Pause</button>
+          <label class="cmp-time-label">Time <input class="cmp-time" type="range" min="0" max="0" step="0.033333333333" value="0" disabled="" aria-label="Comparison playback time" aria-controls="cmp-0"></label>
+          <label class="cmp-clip-label">Clip <select class="cmp-clip" id="cmp-clip" aria-controls="cmp-0"></select></label>
+          <span class="cmp-status note" role="status" aria-live="polite" hidden></span>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  </section>
+
+  <div class="divider"></div>
+
+<!-- ==================== ANALYSIS ==================== -->
+
+  <section class="sec" id="analysis">
+    <div class="container is-max-desktop">
+      <div class="sec-head rv">
+        <div class="kicker">04 · Analysis</div>
+        <h2 class="sec-title">Expert Analysis and Ablations</h2>
+
+      <p class="sec-sub">Routing and FiLM have different roles. The matrix shows how observation patterns affect expert routing, with same subset of experts reused for different patterns. The FiLM visualizations show how learned modulation varies across patterns, allowing selected experts to further adapt their outputs.</p></div>
+
+      <div class="moe-grid">
+        <div class="fig-card rv rv-l">
+          <a href="./static/images/expert_assignments.png" target="_blank" rel="noopener" aria-label="Open full-size expert assignment figure">
+            <img src="./static/images/expert_assignments.png" alt="Matrix of mean routed-expert selection weights by observation pattern.">
+          </a>
+          <div class="fig-cap">(a) Mean selection weights for 12 routed experts, with 4 active per frame token, measured at the fourth pose-stream feed-forward block on 204 AMASS test clips. Weights are averaged within each clip, then across clips. Blank cells mean zero weight. Always-active shared experts are excluded. Bold expert IDs identify the representatives in (b).</div>
+        </div>
+        <div class="fig-card rv rv-r">
+          <a href="./static/images/moe_film_umap.jpg" target="_blank" rel="noopener" aria-label="Open full-size FiLM embedding figure">
+            <img src="./static/images/moe_film_umap.jpg" alt="UMAP projections of FiLM scale offsets and shifts for Experts 1, 9, and 2.">
+          </a>
+          <div class="fig-cap">(b) UMAP provides a two-dimensional view of the 256-dimensional FiLM scale offsets (left) and shift vectors (right). Each point represents one routed expert's modulation vector for one observation pattern and clip; grouping visualizes similarities in the learned modulation. Experts 1, 9, and 2 correspond to the bold IDs in (a).</div>
+        </div>
+      </div>
+
+      <p class="note" style="margin-top:1.2rem">The following ablations test the contributions of expert capacity and FiLM modulation. Unless otherwise stated, we use AMASS with the upper-body joint-position pattern.</p>
+
+      <div class="fact-chips rv" style="margin-top:1rem">
+        <div class="fact"><div class="fv">8 → 12 routed experts</div><div class="fl">Increasing the number of routed experts from eight to twelve reduces MPJPE from 43.4 to 37.5 mm.</div></div>
+        <div class="fact"><div class="fv">+ expert-wise FiLM</div><div class="fl">On top of the 12-expert model, adding expert-wise FiLM further reduces MPJPE to 33.5 mm.</div></div>
+        <div class="fact"><div class="fv">width of each expert</div><div class="fl">Widening individual experts does not provide a comparable improvement.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ==================== PAPER AND CODE ==================== -->
+
+
+
+  <!-- ============================= FOOTER =========================== -->
+
+  <footer class="foot">
+    <p style="margin-bottom:.5rem"><span class="brand-word" style="font-family:var(--font-display)">[OmniPoser]</span>
+      · Shanghai Jiao Tong University &amp; Shanghai Artificial Intelligence Laboratory</p>
+    <p class="site-credit" style="font-size:.8rem">Site template adapted from <a href="https://nerfies.github.io" target="_blank" rel="noopener">nerfies.github.io</a> · <span class="mono" id="year">2026</span></p>
+  </footer>
+
+
+
+  <script src="./static/js/bars-data.js"></script>
+
+  <script src="./static/js/comparison-editorial-20261020.js"></script>
+  <script src="./static/js/omniposer.js"></script>
+
+  <script src="./static/js/hero-wall.steady-native-20261020-v2.js"></script>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+
+
+
+</body></html>

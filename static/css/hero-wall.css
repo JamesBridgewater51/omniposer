@@ -1,0 +1,217 @@
+/* ============================================================================
+   Hero video wall — full-bleed dark hero moment.
+   The wall canvas fills the viewport (under the transparent navbar); ONE
+   scrim dims it; title/authors ride a bottom-anchored overlay. On scroll
+   the whole hero shrinks to --hw-shrink of its height while the next
+   section is pulled up into the driver's tail. Layout comes from
+   static/videos/wall.json (tools/build_wall.py) — nothing here is
+   content-specific.
+   ========================================================================== */
+
+.hw-driver {
+  --hw-sticky-range: 60vh;   /* scroll distance spent shrinking */
+  --hw-shrink: 0.52;         /* final wall height fraction */
+  --hw-ink-2: rgba(255, 255, 255, 0.78);
+  --hw-ink-3: rgba(255, 255, 255, 0.62);
+  --hw-accent: #b99ae8;      /* one light accent (echoes the paper purple) */
+  position: relative;
+  height: calc(100vh + var(--hw-sticky-range));
+  background: #080a0e;       /* dark seam while the wall settles */
+}
+
+.hw-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: #080a0e;        /* black base, bound to the wall box only */
+}
+
+.hw-scale {
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 0;
+  will-change: transform;
+}
+
+#hero-wall-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------------------------------------------------------------- scrim
+   ONE dimming layer above the whole wall, never per tile: a flat global
+   dim, a gentle downward gradient, and a center radial vignette so the
+   now-centered title block stays readable over bright clips.           */
+.hw-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 45% at 50% 50%,
+      rgba(8, 10, 14, 0.55), transparent 70%),
+    linear-gradient(180deg,
+      rgba(8, 10, 14, 0.14) 0%,
+      rgba(8, 10, 14, 0.22) 55%,
+      rgba(8, 10, 14, 0.45) 100%),
+    rgba(8, 10, 14, 0.30);
+}
+
+/* -------------------------------------------------------------- overlay
+   Title block dead-center of the viewport, above the scrim.             */
+.hw-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.5rem;
+  pointer-events: none;      /* let the wall breathe through empty areas */
+}
+.hw-overlay .container { pointer-events: auto; }
+
+.hw-venue {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(0.82rem, 1.4vw, 1.02rem);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--hw-accent);
+  margin-bottom: 0.7rem;
+}
+
+.hw-title {
+  /* escapes the light-theme h1 rule (.op h1 { color: var(--ink) !important }) */
+  color: #ffffff !important;
+  font-family: var(--font-display);
+  font-weight: 650;
+  font-size: clamp(2.2rem, 5vw, 3.9rem);
+  line-height: 1.12;
+  text-wrap: balance;
+  max-width: 22ch;
+  margin: 0 auto 1.1rem;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45);   /* insurance only */
+}
+
+.hw-authors {
+  color: var(--hw-ink-2);
+  font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+  font-weight: 500;
+  margin-bottom: 0.35rem;
+}
+.hw-authors sup { color: var(--hw-ink-3); }
+
+.hw-affils {
+  color: var(--hw-ink-3);
+  font-size: clamp(0.85rem, 1.4vw, 1rem);
+  margin-bottom: 1.5rem;
+}
+
+/* translucent pills over dark — kin to the nerfies is-dark buttons */
+.hw-links { justify-content: center; }
+.hw-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.15rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 0.92rem;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+.hw-btn:hover {
+  background: rgba(255, 255, 255, 0.26);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* -------------------------------------------------------------- navbar
+   The hero owns the first screen ENTIRELY — no chrome over the wall at
+   load. The nav materializes (frosted light) only once the user has
+   scrolled past the hero, where it sits over the light sections.       */
+.hw-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  opacity: 0;                  /* hidden over the hero */
+  pointer-events: none;
+  transition: opacity 0.3s ease, background 0.3s ease, border-color 0.3s ease,
+              backdrop-filter 0.3s ease;
+}
+.hw-navbar:not(.hw-solid) .navbar-item,
+.hw-navbar:not(.hw-solid) .navbar-link {
+  color: rgba(255, 255, 255, 0.82);
+}
+.hw-navbar:not(.hw-solid) .navbar-item:hover,
+.hw-navbar:not(.hw-solid) .navbar-link:hover {
+  color: #ffffff;
+  background: transparent;
+}
+.hw-navbar:not(.hw-solid) .navbar-brand .brand-word { color: #ffffff; }
+.hw-navbar:not(.hw-solid) .navbar-burger span {
+  background-color: rgba(255, 255, 255, 0.82);
+}
+.hw-navbar.hw-solid {
+  opacity: 1;                  /* revealed only after the hero scrolls past */
+  pointer-events: auto;
+  background: rgba(255, 255, 255, 0.78);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  backdrop-filter: saturate(180%) blur(16px);
+  border-bottom-color: var(--line-soft);
+}
+.hw-navbar.hw-solid .navbar-item, .hw-navbar.hw-solid .navbar-link {
+  color: var(--ink-2);
+}
+.hw-navbar.hw-solid .navbar-item:hover, .hw-navbar.hw-solid .navbar-link:hover {
+  color: var(--accent);
+}
+.hw-navbar.hw-solid .navbar-brand .brand-word { color: var(--ink); }
+
+/* the section right after the wall slides in as the wall settles at half */
+.hw-next {
+  position: relative;
+  z-index: 2;
+  background: var(--bg);
+  margin-top: calc(-1 * (1 - var(--hw-shrink, 0.52)) * 100vh);
+}
+
+/* subtle scroll affordance, fades on first scroll */
+.hw-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 1.1rem;
+  pointer-events: none;
+  transition: opacity .5s ease;
+  animation: hw-hint-bob 2.4s ease-in-out infinite;
+  z-index: 3;
+}
+
+@keyframes hw-hint-bob {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, 6px); }
+}
+
+@media (max-width: 719px) {
+  .hw-driver {
+    --hw-sticky-range: 40vh;
+    --hw-shrink: 0.55;
+  }
+  .hw-title { max-width: 16ch; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hw-hint { display: none; }
+}
