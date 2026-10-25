@@ -529,16 +529,19 @@
       function reconcile() {
         if (failed) return;
         if (!visible || document.hidden) {
-          pauseBoth();
+          // Temporary suspension only: mark the paused phase before pausing so the
+          // videos' own pause events are not mistaken for a reader pause, and
+          // playback resumes automatically when the comparison returns to view.
           state('paused', 'Paused while out of view');
+          pauseBoth();
           return;
         }
         if (!wanted) {
           if (!front.every(Boolean) && !pairSeeking && videos.every(v => v.readyState >= 2)) {
             seekPair(videos[0].currentTime + (Number(timeline.step) || 1 / 30));
           }
-          pauseBoth();
           state('paused', 'Paused');
+          pauseBoth();
           return;
         }
         if (!videos.every(v => v.readyState >= 3 && !v.seeking)) {
@@ -658,6 +661,7 @@
           });
           add('pause', () => {
             if (phase !== 'playing' || v.ended) return;
+            if (!visible || document.hidden) return; // suspension, not a reader pause
             wanted = false; pauseBoth(); state('paused', 'Paused');
           });
           add('ended', () => {
